@@ -15,8 +15,8 @@ export class App extends Component {
           <NavLeft />
           <Switch>
             <Route
-              path="/:id"
-              render={(routeProps) => <Dashboard props={{ ...routeProps }} />}
+              path="/:userId"
+              render={(routeProps) => <Dashboard {...routeProps} />}
             />
             <Route>
               <ErrorPage />
