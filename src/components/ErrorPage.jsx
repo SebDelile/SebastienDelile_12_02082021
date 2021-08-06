@@ -13,10 +13,10 @@ export class ErrorPage extends Component {
         </Message>
         <LinkList>
           <li>
-            <StyledLink to="../:12">Utilisateur #12</StyledLink>
+            <StyledLink to="/12">Utilisateur #12</StyledLink>
           </li>
           <li>
-            <StyledLink to="../:18">Utilisateur #18</StyledLink>
+            <StyledLink to="/18">Utilisateur #18</StyledLink>
           </li>
         </LinkList>
       </Container>
