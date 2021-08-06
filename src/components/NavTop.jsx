@@ -52,7 +52,9 @@ const Logo = styled.img`
 
 const Nav = styled.nav`
   flex: 1;
-  max-width: calc(90rem * 0.9 - var(--nav-left-width));
+  max-width: calc(
+    90rem * (1 - 2 * var(--main-padding-no-unit)) - var(--nav-left-width)
+  );
 `;
 
 const NavList = styled.ul`

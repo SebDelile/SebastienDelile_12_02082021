@@ -40,6 +40,7 @@ const Container = styled.aside`
   justify-content: center;
   align-items: center;
   background-color: black;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 `;
 
 const IconsWrapper = styled.ul`

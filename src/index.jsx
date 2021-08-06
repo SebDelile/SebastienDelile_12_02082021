@@ -52,7 +52,7 @@ const GlobalStyle = createGlobalStyle`
   font-weight: 700;
 }
 
-html {
+* {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
 }
@@ -63,10 +63,11 @@ html {
 
 :root {
   --nav-left-width: 7.5rem;
-  --main-padding: 5%;
+  --main-padding-no-unit: 0.065;
+  --main-padding: calc(100% * var(--main-padding-no-unit));
 
   @media only screen and (min-width: 90rem) {
-    --main-padding: calc((100% - 90rem * 0.9) / 2);
+    --main-padding: calc((100% - 90rem * (1 - 2 * var(--main-padding-no-unit))) / 2);
   }
 }
 
