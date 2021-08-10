@@ -8,6 +8,7 @@ import { Performance } from './Performance';
 import { AverageScore } from './AverageScore';
 import { KeyData } from './KeyData';
 import { getData } from '../services/getData.js';
+import { isObjectEmpty } from '../utils/isObjectEmpty.js';
 
 export class Dashboard extends Component {
   constructor(props) {
@@ -38,25 +39,34 @@ export class Dashboard extends Component {
   }
 
   render() {
-    if (Object.getOwnPropertyNames(this.state.userMainData).length === 0) {
-      return null;
-    } else if (this.state.userMainData instanceof Error) {
-      return <Redirect to="/" />;
-    }
-    return (
-      <Container>
-        <Greetings data={this.state.userMainData.userInfos} />
-        <Activity data={this.state.userActivity} />
-        <AverageSessions data={this.state.userAverageSessions} />
-        <Performance data={this.state.userPerformance} />
-        <AverageScore
-          data={
-            this.state.userMainData.todayScore || this.state.userMainData.score
-          }
-        />
-        <KeyData data={this.state.userMainData.keyData} />
-      </Container>
-    );
+    const isDataNotReady =
+      isObjectEmpty(this.state.userMainData) &&
+      isObjectEmpty(this.state.userActivity) &&
+      isObjectEmpty(this.state.userAverageSessions) &&
+      isObjectEmpty(this.state.userPerformance);
+    const isDataError =
+      this.state.userMainData instanceof Error ||
+      this.state.userActivitya instanceof Error ||
+      this.state.userAverageSessions instanceof Error ||
+      this.state.userPerformance instanceof Error;
+    if (isDataNotReady) return null;
+    else if (isDataError) return <Redirect to="/" />;
+    else
+      return (
+        <Container>
+          <Greetings data={this.state.userMainData.userInfos} />
+          <Activity data={this.state.userActivity} />
+          <AverageSessions data={this.state.userAverageSessions} />
+          <Performance data={this.state.userPerformance} />
+          <AverageScore
+            data={
+              this.state.userMainData.todayScore ||
+              this.state.userMainData.score
+            }
+          />
+          <KeyData data={this.state.userMainData.keyData} />
+        </Container>
+      );
   }
 }
 
@@ -70,6 +80,7 @@ const Container = styled.main`
     'greetings greetings greetings greetings'
     'activity activity activity key-data'
     'average-sessions performance average-score key-data';
+  grid-template-columns: repeat(4, 1fr);
   justify-items: stretch;
   align-items: stretch;
   gap: 2rem;
