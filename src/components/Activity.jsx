@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ChartContainer } from './ChartContainer.jsx';
 import { BarChart } from './BarChart.jsx';
 import { isObjectEmpty } from '../utils/isObjectEmpty.js';
+import { colors } from '../utils/colors.js';
 
 /**
  * Render the Activity part of the Dashboard
@@ -39,14 +40,14 @@ export class Activity extends Component {
               {
                 name: 'Poids',
                 unit: 'kg',
-                color: '#282D30',
+                color: colors.secondary,
                 isAxis: true,
                 isFromZero: false,
               },
               {
                 name: 'Calories brûlées',
                 unit: 'kcal',
-                color: '#E60000',
+                color: colors.primary,
                 isAxis: false,
                 isFromZero: true,
               },
@@ -62,6 +63,6 @@ export class Activity extends Component {
 const StyledChartContainer = styled(ChartContainer)`
   grid-area: activity;
   height: 20rem;
-  background-color: #fbfbfb;
+  background-color: ${colors.veryLightGrey};
   border-radius: 0.375rem;
 `;

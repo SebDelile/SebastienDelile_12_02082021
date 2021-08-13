@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import styled from 'styled-components';
+import { colors } from '../utils/colors.js';
 
 export class Greetings extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ const Title = styled.h1`
 `;
 
 const FirstName = styled.span`
-  color: red;
+  color: ${colors.primary};
 `;
 
 const Message = styled.p`

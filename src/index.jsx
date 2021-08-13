@@ -62,9 +62,13 @@ const GlobalStyle = createGlobalStyle`
 -------------------------------------------------- */
 
 :root {
-  --nav-left-width: 7.5rem;
+  --nav-left-width: 6rem;
   --main-padding-no-unit: 0.065;
   --main-padding: calc(100% * var(--main-padding-no-unit));
+
+  @media only screen and (min-width: 80rem) {
+    --nav-left-width: 7.5rem;
+  }
 
   @media only screen and (min-width: 90rem) {
     --main-padding: calc((100% - 90rem * (1 - 2 * var(--main-padding-no-unit))) / 2);

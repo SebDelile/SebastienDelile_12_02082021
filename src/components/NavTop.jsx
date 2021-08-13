@@ -2,6 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import logo from '../assets/logo.svg';
+import { colors } from '../utils/colors.js';
 
 export class NavTop extends Component {
   render() {
@@ -41,7 +42,7 @@ const Container = styled.header`
   align-items: center;
   padding-left: 1.875rem;
   padding-right: var(--main-padding);
-  background: black;
+  background: ${colors.veryDarkGrey};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 `;
 

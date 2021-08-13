@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { fixJSfloatError } from '../utils/fixJSfloatError.js';
+import { colors } from '../utils/colors.js';
 
 /**
  * Render a barchart
@@ -182,7 +183,7 @@ export class BarChart extends Component {
       )
       .attr('font-size', 15)
       .attr('alignment-baseline', 'middle')
-      .attr('fill', '#20253A')
+      .attr('fill', colors.secondaryAlt)
       .text(this.props.title);
   };
 
@@ -203,7 +204,7 @@ export class BarChart extends Component {
       .select('text')
       .attr('font-size', 14)
       .attr('font-family', 'monospace')
-      .attr('fill', '#74798C')
+      .attr('fill', colors.tertiary)
       .text((serie) => `${serie.name} (${serie.unit})`)
       .attr('dx', 15)
       .attr('alignment-baseline', 'middle');
@@ -259,14 +260,14 @@ export class BarChart extends Component {
       );
     xAxis
       .select('path.domain')
-      .attr('stroke', '#DEDEDE')
+      .attr('stroke', colors.lightGrey)
       .attr('stroke-width', 1);
 
     xAxis
       .selectAll('text')
       .attr('font-size', 14)
       .attr('text-anchor', 'middle')
-      .attr('fill', '#9B9EAC')
+      .attr('fill', colors.tertiaryAlt)
       .attr('transform', 'translate(0, ' + (this.margin.bottom / 2 - 10) + ')');
   };
   /**
@@ -302,7 +303,7 @@ export class BarChart extends Component {
     yAxis
       .selectAll('text')
       .attr('font-size', 14)
-      .attr('fill', '#9B9EAC')
+      .attr('fill', colors.tertiaryAlt)
       .attr('transform', 'translate(' + this.margin.right / 2 + ', 0)')
       .attr('text-anchor', 'middle');
   };
@@ -323,7 +324,7 @@ export class BarChart extends Component {
       );
     yGrid
       .selectAll('.tick line')
-      .attr('stroke', '#DEDEDE')
+      .attr('stroke', colors.lightGrey)
       .attr('stroke-dasharray', 2)
       .attr('stroke-width', 1)
       .filter((line) => line === this.setTicksValues()[0])
@@ -416,7 +417,7 @@ export class BarChart extends Component {
       .attr('y', 0)
       .attr('width', this.chartWidth / this.props.dataset.length + 1)
       .attr('height', this.chartHeight)
-      .attr('fill', '#C4C4C4')
+      .attr('fill', colors.grey)
       .style('opacity', 0);
   };
 
@@ -466,7 +467,7 @@ export class BarChart extends Component {
       .select('.tooltipBackground')
       .attr('height', 64)
       .attr('width', 0)
-      .style('fill', '#E60000');
+      .style('fill', colors.primary);
   };
 
   /**

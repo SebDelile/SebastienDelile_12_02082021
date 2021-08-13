@@ -4,6 +4,7 @@ import iconYoga from '../assets/icon-yoga.svg';
 import iconBiking from '../assets/icon-biking.svg';
 import iconSwimming from '../assets/icon-swimming.svg';
 import iconBodybuilding from '../assets/icon-bodybuilding.svg';
+import { colors } from '../utils/colors.js';
 
 export class NavLeft extends Component {
   render() {
@@ -39,7 +40,7 @@ const Container = styled.aside`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: black;
+  background-color: ${colors.veryDarkGrey};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 `;
 

@@ -2,6 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import { giveOpacityToColorHex } from '../utils/giveOpacityToColorHex.js';
 import { putThousandSeparator } from '../utils/putThousandSeparator.js';
+import { colors } from '../utils/colors.js';
 
 export class Card extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ export class Card extends Component {
 }
 
 const Container = styled.div`
-  background-color: var(--chart-bg-color);
+  background-color: ${colors.veryLightGrey};
   border-radius: 0.375rem;
   display: flex;
   justify-content: space-arround;
@@ -80,7 +81,7 @@ const Icon = styled.img`
 const Value = styled.p`
   grid-area: value;
   font-weight: 700;
-  color: #282d30;
+  color: ${colors.secondary};
   font-size: 16px;
 
   @media only screen and (min-width: 80rem) {
@@ -91,5 +92,5 @@ const Value = styled.p`
 const Name = styled.p`
   grid-area: name;
   font-size: 14px;
-  color: #74798c;
+  color: ${colors.tertiary};
 `;
