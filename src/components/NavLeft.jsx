@@ -58,14 +58,23 @@ const IconShape = styled.li`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 4rem;
-  width: 4rem;
+  height: 3rem;
+  width: 3rem;
   border-radius: 0.375rem;
   background-color: white;
+
+  @media only screen and (min-width: 80rem) {
+    height: 4rem;
+    width: 4rem;
+  }
 `;
 
 const Icon = styled.img`
-  height: 2rem;
+  height: 1.5rem;
+
+  @media only screen and (min-width: 80rem) {
+    height: 2rem;
+  }
 `;
 
 const Disclaimer = styled.p`

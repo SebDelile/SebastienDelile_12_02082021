@@ -13,4 +13,5 @@ export class Performance extends Component {
 
 const Container = styled.div`
   grid-area: performance;
+  height: 16.5rem;
 `;
