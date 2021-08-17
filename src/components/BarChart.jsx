@@ -74,7 +74,7 @@ export class BarChart extends Component {
 
     chart.append('g').attr('class', 'yGrid');
 
-    chart.append('rect').attr('class', 'hoveredData');
+    chart.append('rect').attr('class', 'tooltip-shadowing-data');
 
     chart.append('g').attr('class', 'xAxis');
 
@@ -87,75 +87,31 @@ export class BarChart extends Component {
       .append('g')
       .attr('class', 'barsSet');
 
-    const tooltip = chart.append('g').attr('class', 'tooltip');
-    tooltip.append('rect').attr('class', 'tooltipBackground');
+    const tooltip = chart.append('g').attr('class', 'tooltip-box');
+    tooltip.append('rect').attr('class', 'tooltip-background');
     tooltip
-      .selectAll('tooltipText')
+      .selectAll('tooltip-text')
       .data(this.props.series)
       .enter()
       .append('text')
-      .attr('class', 'tooltipText');
+      .attr('class', 'tooltip-text');
   };
 
   /**
-   * set the x Axis scale (range and domain). -0.5 and +0.5 in domain lead to equal width for all data point.
-   * @returns {function} - a function to be used to convert data in chart position/lenght
+   * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
-  setxAxisScale = () => {
-    return d3
-      .scaleLinear()
-      .range([0, this.chartWidth])
-      .domain([
-        d3.min(this.props.dataset, (data) => data.x) - 0.5,
-        d3.max(this.props.dataset, (data) => data.x) + 0.5,
-      ]);
-  };
-
-  /**
-   * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
-   * @param {*} serie - the serie for which the domain is built
-   * @param {*} index - the index of this serie in the table this.props.dataset and this.props.series
-   * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain and the step value
-   */
-  setyDomain = (serie, index) => {
-    const max = d3.max(this.props.dataset, (data) => data.y[index]);
-    const min = serie.isFromZero
-      ? 0
-      : d3.min(this.props.dataset, (data) => data.y[index]);
-
-    const delta = max - min;
-    const step = delta / 3;
-
-    const rounder = 10 ** Math.floor(Math.log10(step));
-    const stepRounded = Math.ceil(step / rounder) * rounder;
-
-    const minRounded =
-      min === 0
-        ? 0
-        : min - Math.floor(min / stepRounded) * stepRounded >= stepRounded / 3
-        ? Math.floor(min / stepRounded) * stepRounded
-        : Math.floor(min / stepRounded) * stepRounded - stepRounded;
-    const maxRounded = Math.ceil(max / stepRounded) * stepRounded;
-
-    return {
-      minRounded: minRounded,
-      maxRounded: maxRounded,
-      stepRounded: stepRounded,
-    };
-  };
-
-  /**
-   * set the y Axis scale (range and domain). use the enlarge domain provided by this.setyDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
-   * @returns {function} - a function to be used to convert data in chart position/lenght
-   */
-  setyAxisScale = () => {
-    return this.props.series.map((serie, index) => {
-      const { minRounded, maxRounded } = this.setyDomain(serie, index);
-      return d3
-        .scaleLinear()
-        .range([this.chartHeight, 0])
-        .domain([minRounded, maxRounded]);
-    });
+  updateBarChart = () => {
+    this.setSvgAttr();
+    this.setTitleAttr();
+    this.setLegendAttr();
+    this.setChartAttr();
+    const xAxisScale = this.setxAxisScale();
+    this.setxAxisAttr(xAxisScale);
+    const yAxisScale = this.setyAxisScale();
+    this.setyAxisAttr(yAxisScale[this.yAxisSerieIndex]);
+    this.setyGridAttr(yAxisScale[this.yAxisSerieIndex]);
+    this.setBarsAttr(xAxisScale, yAxisScale);
+    this.setTooltipAttr();
   };
 
   /**
@@ -244,6 +200,20 @@ export class BarChart extends Component {
   };
 
   /**
+   * set the x Axis scale (range and domain). -0.5 and +0.5 in domain lead to equal width for all data point.
+   * @returns {function} - a function to be used to convert data in chart position/lenght
+   */
+  setxAxisScale = () => {
+    return d3
+      .scaleLinear()
+      .range([0, this.chartWidth])
+      .domain([
+        d3.min(this.props.dataset, (data) => data.x) - 0.5,
+        d3.max(this.props.dataset, (data) => data.x) + 0.5,
+      ]);
+  };
+
+  /**
    * set attributes and styling of the x Axis
    */
   setxAxisAttr = (xAxisScale) => {
@@ -270,6 +240,40 @@ export class BarChart extends Component {
       .attr('fill', colors.tertiaryAlt)
       .attr('transform', 'translate(0, ' + (this.margin.bottom / 2 - 10) + ')');
   };
+
+  /**
+   * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
+   * @param {*} serie - the serie for which the domain is built
+   * @param {*} index - the index of this serie in the table this.props.dataset and this.props.series
+   * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain and the step value
+   */
+  setyDomain = (serie, index) => {
+    const max = d3.max(this.props.dataset, (data) => data.y[index]);
+    const min = serie.isFromZero
+      ? 0
+      : d3.min(this.props.dataset, (data) => data.y[index]);
+
+    const delta = max - min;
+    const step = delta / 3;
+
+    const rounder = 10 ** Math.floor(Math.log10(step));
+    const stepRounded = Math.ceil(step / rounder) * rounder;
+
+    const minRounded =
+      min === 0
+        ? 0
+        : min - Math.floor(min / stepRounded) * stepRounded >= stepRounded / 3
+        ? Math.floor(min / stepRounded) * stepRounded
+        : Math.floor(min / stepRounded) * stepRounded - stepRounded;
+    const maxRounded = Math.ceil(max / stepRounded) * stepRounded;
+
+    return {
+      minRounded: minRounded,
+      maxRounded: maxRounded,
+      stepRounded: stepRounded,
+    };
+  };
+
   /**
    * set the tick values according to the ydomain from this.setyDomain()
    * @returns {array} - table of value to be used as tick values by both the y axis and the y grid
@@ -284,6 +288,20 @@ export class BarChart extends Component {
     )
       .fill(null)
       .map((value, index) => fixJSfloatError(minRounded + index * stepRounded));
+  };
+
+  /**
+   * set the y Axis scale (range and domain). use the enlarge domain provided by this.setyDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
+   * @returns {function} - a function to be used to convert data in chart position/lenght
+   */
+  setyAxisScale = () => {
+    return this.props.series.map((serie, index) => {
+      const { minRounded, maxRounded } = this.setyDomain(serie, index);
+      return d3
+        .scaleLinear()
+        .range([this.chartHeight, 0])
+        .domain([minRounded, maxRounded]);
+    });
   };
 
   /**
@@ -385,14 +403,8 @@ export class BarChart extends Component {
         .attr('d', (data) =>
           this.drawBar(xAxisScale(data.x), this.chartHeight, 0, index)
         )
-        .on('mouseover', (e) => {
-          this.makeHoveredDataAppear(e);
-          this.makeTooltipAppear(e);
-        })
-        .on('mouseout', (e) => {
-          this.makeHoveredDataDisappear(e);
-          this.makeTooltipDisappear(e);
-        })
+        .on('mouseover', this.makeTooltipAppear)
+        .on('mouseout', this.makeTooltipDisappear)
         .transition()
         .duration(1000)
         .ease(d3.easeCubicOut)
@@ -408,52 +420,24 @@ export class BarChart extends Component {
   };
 
   /**
-   * set the attribute for the rect underlayer of hovered data, initial opacity to 0 to make it invisible
+   * set the attribute for the tooltip. initial opacity to 0 to make it invisible
    */
-  setHoveredDataAttr = () => {
-    d3.select(this.svgRootNode)
-      .select('.hoveredData')
+  setTooltipAttr = () => {
+    const svg = d3.select(this.svgRootNode);
+
+    svg
+      .select('.tooltip-shadowing-data')
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', this.chartWidth / this.props.dataset.length + 1)
       .attr('height', this.chartHeight)
       .attr('fill', colors.grey)
       .style('opacity', 0);
-  };
 
-  /**
-   * the function to be passed as call for the data mouseover to make appear the rect underlayer of hovered data
-   * @param {event} mouseEvent - the fired event on mouseover
-   */
-  makeHoveredDataAppear = (mouseEvent) => {
-    const data = mouseEvent.target.__data__;
-    d3.select(this.svgRootNode)
-      .select('.hoveredData')
-      .attr('x', (data.x - 1) * (this.chartWidth / this.props.dataset.length))
-      .transition()
-      .duration(200)
-      .style('opacity', 0.5);
-  };
+    svg.select('.tooltip-box').attr('opacity', 0);
 
-  /**
-   * the function to be passed as call for the data mouseout to make disappear the rect underlayer
-   */
-  makeHoveredDataDisappear = () => {
-    d3.select(this.svgRootNode)
-      .select('.hoveredData')
-      .transition()
-      .duration(200)
-      .style('opacity', 0);
-  };
-
-  /**
-   * set the attribute for the tooltip. initial opacity to 0 to make it invisible
-   */
-  setTooltipAttr = () => {
-    d3.select(this.svgRootNode).select('.tooltip').attr('opacity', 0);
-
-    d3.select(this.svgRootNode)
-      .selectAll('.tooltipText')
+    svg
+      .selectAll('.tooltip-text')
       .attr('height', 32)
       .attr('alignment-baseline', 'middle')
       .attr(
@@ -463,8 +447,9 @@ export class BarChart extends Component {
       .attr('fill', 'white')
       .attr('font-size', 10)
       .text('');
-    d3.select(this.svgRootNode)
-      .select('.tooltipBackground')
+
+    svg
+      .select('.tooltip-background')
       .attr('height', 64)
       .attr('width', 0)
       .style('fill', colors.primary);
@@ -476,12 +461,21 @@ export class BarChart extends Component {
    */
   makeTooltipAppear = (mouseEvent) => {
     const data = mouseEvent.target.__data__;
-    const texts = d3
-      .select(this.svgRootNode)
-      .selectAll('.tooltipText')
+    const svg = d3.select(this.svgRootNode);
+
+    svg
+      .select('.tooltip-shadowing-data')
+      .attr('x', (data.x - 1) * (this.chartWidth / this.props.dataset.length))
+      .transition()
+      .duration(200)
+      .style('opacity', 0.5);
+
+    const texts = svg
+      .selectAll('.tooltip-text')
       .text((serie, index) => `${data.y[index]}${serie.unit}`);
-    d3.select(this.svgRootNode)
-      .select('.tooltip')
+
+    svg
+      .select('.tooltip-box')
       .attr(
         'transform',
         `translate(${
@@ -491,8 +485,9 @@ export class BarChart extends Component {
       .transition()
       .duration(200)
       .style('opacity', 1);
-    d3.select(this.svgRootNode)
-      .select('.tooltipBackground')
+
+    svg
+      .select('.tooltip-background')
       .attr(
         'width',
         d3.max(texts.nodes(), (node) => node.getBBox().width) + 16
@@ -503,31 +498,19 @@ export class BarChart extends Component {
    * the function to be passed as call for the data mouseout to make disappear the tooltip. text and width are reset.
    */
   makeTooltipDisappear = () => {
-    d3.select(this.svgRootNode).selectAll('.tooltipText').text('');
-    d3.select(this.svgRootNode)
-      .select('.tooltip')
+    const svg = d3.select(this.svgRootNode);
+
+    svg
+      .select('.tooltip-shadowing-data')
       .transition()
       .duration(200)
       .style('opacity', 0);
-    d3.select(this.svgRootNode).select('.tooltipBackground').attr('width', 0);
-  };
 
-  /**
-   * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
-   */
-  updateBarChart = () => {
-    const xAxisScale = this.setxAxisScale();
-    const yAxisScale = this.setyAxisScale();
-    this.setSvgAttr();
-    this.setTitleAttr();
-    this.setLegendAttr();
-    this.setChartAttr();
-    this.setxAxisAttr(xAxisScale);
-    this.setyAxisAttr(yAxisScale[this.yAxisSerieIndex]);
-    this.setyGridAttr(yAxisScale[this.yAxisSerieIndex]);
-    this.setBarsAttr(xAxisScale, yAxisScale);
-    this.setHoveredDataAttr();
-    this.setTooltipAttr();
+    svg.selectAll('.tooltip-text').text('');
+
+    svg.select('.tooltip-box').transition().duration(200).style('opacity', 0);
+
+    svg.select('.tooltip-background').attr('width', 0);
   };
 
   /**
