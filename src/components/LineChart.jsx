@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { colors } from '../utils/colors.js';
+import { setNiceDomain } from '../utils/setNiceDomain.js';
 
 /**
  * Render a linechart
@@ -9,11 +10,13 @@ import { colors } from '../utils/colors.js';
  * @param {array} props.title - the title of the chart
  * @param {object} props.xAxis - the details of the x Axis data (name, unit)
  * @param {object} props.serie -  the details of the data serie (name, unit, color)
- * @param {array} dataset - the processed data to make the barchart. Aray of object, object avec a key "x" containing x value and a key "y" containing a y value.
+ * @param {array} props.dataset - the processed data to make the linechart. Array of object, with a key "x" containing x value and a key "y" containing a y value.
+ * @param {function} props.xAxisLabel - a function to convert x data into readable label for the axis
+ * @param {number} props.containerWidth - the width of the container provided by ChartContainer
+ * @param {number} props.containerHeight - the height of the container provided by ChartContainer
  * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
  * @param {number} chartWidth - the width of the chart (container - margins)
  * @param {number} chartHeight - the height of the chart (container - margins)
- * @param {function} xAxisLabel - a function to convert x data into readable label for the axis
  */
 export class LineChart extends Component {
   constructor(props) {
@@ -34,21 +37,21 @@ export class LineChart extends Component {
    * Initialize the chart with create chart and then put the data inside
    */
   componentDidMount() {
-    this.createBarChart();
-    this.updateBarChart();
+    this.createChart();
+    this.updateChart();
   }
 
   /**
    * Update all the chart, including axis size, position ... Might be launch on window resize
    */
   componentDidUpdate() {
-    this.updateBarChart();
+    this.updateChart();
   }
 
   /**
    * Create and append all the element in the chart. Must be call only once to avoid mismatch between DOM and shadow DOM (so called by componentDidMount)
    */
-  createBarChart = () => {
+  createChart = () => {
     const svg = d3.select(this.svgRootNode);
 
     const gradient = svg
@@ -80,7 +83,7 @@ export class LineChart extends Component {
   /**
    * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
-  updateBarChart = () => {
+  updateChart = () => {
     this.setSvgAttr();
     this.setTitleAttr();
     this.setChartAttr();
@@ -88,7 +91,7 @@ export class LineChart extends Component {
     this.setxAxisAttr(xAxisScale);
     const yAxisScale = this.setyAxisScale();
     this.setLineGradientAttr();
-    this.setLinesAttr(xAxisScale, yAxisScale);
+    this.setLineAttr(xAxisScale, yAxisScale);
     this.setOverlayAttr(xAxisScale, yAxisScale);
     this.setTooltipAttr();
   };
@@ -201,27 +204,32 @@ export class LineChart extends Component {
    * @returns {function} - a function to be used to convert data in chart position/lenght
    */
   setyAxisScale = () => {
+    const { minRounded, maxRounded } = setNiceDomain(
+      false,
+      this.props.dataset.map((data) => data.y),
+      8
+    );
     return d3
       .scaleLinear()
       .range([this.chartHeight, 0])
-      .domain([
-        d3.min(this.props.dataset, (data) => data.y),
-        d3.max(this.props.dataset, (data) => data.y),
-      ]);
+      .domain([minRounded, maxRounded]);
   };
 
   /**
-   * Make the path of the line according to data. Slight smooth used with monotoneX interpolation
+   * Make the path of the line according to data. rounded smooth using curveCardinal interpolation
    * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
    * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
    */
   drawLine = (xAxisScale, yAxisScale) => {
-    return d3
-      .line(
-        (d) => xAxisScale(d.x),
-        (d) => yAxisScale(d.y)
-      )
-      .curve(d3.curveMonotoneX);
+    return (
+      d3
+        .line(
+          (d) => xAxisScale(d.x),
+          (d) => yAxisScale(d.y)
+        )
+        //curveCardinal is the better to fit the design, HOWEVER it can lead to unrealistic values (example :session duration < 0)
+        .curve(d3.curveCardinal)
+    );
   };
 
   /**
@@ -248,14 +256,28 @@ export class LineChart extends Component {
   };
 
   /**
-   * Set the attributes of the lines. line is drawn with this.drawLine()
+   * Set the attributes of the line. line is drawn with this.drawLine()
    * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
    * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
    */
-  setLinesAttr = (xAxisScale, yAxisScale) => {
+  setLineAttr = (xAxisScale, yAxisScale) => {
+    //Data are extrapolated to suit the design, HOWEVER, it should be better to plot a barchart for these discrete data (days)
+    const leftExtrapolation = {
+      x: d3.min(this.props.dataset, (data) => data.x) - 1,
+      y: d3.mean(this.props.dataset, (data) => data.y),
+    };
+    const rightExtrapolation = {
+      x: d3.max(this.props.dataset, (data) => data.x) + 1,
+      y: d3.mean(this.props.dataset, (data) => data.y),
+    };
+    const extrapolatedDataset = [
+      leftExtrapolation,
+      ...this.props.dataset,
+      rightExtrapolation,
+    ];
     d3.select(this.svgRootNode)
       .select('.line')
-      .datum(this.props.dataset)
+      .datum(extrapolatedDataset)
       .attr('d', this.drawLine(xAxisScale, yAxisScale))
       .attr('stroke', 'url(#lineGradient)')
       .attr('stroke-width', 2)
@@ -299,7 +321,7 @@ export class LineChart extends Component {
       .attr('r', 4)
       .attr('fill', 'white')
       .attr('stroke', 'rgba(255, 255, 255, 0.2)')
-      .attr('stroke-width', 5)
+      .attr('stroke-width', 10)
       .attr('opacity', 0);
 
     svg.select('.tooltip-box').attr('opacity', 0);
