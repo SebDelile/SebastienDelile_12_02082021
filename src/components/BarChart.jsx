@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { fixJSfloatError } from '../utils/fixJSfloatError.js';
 import { colors } from '../utils/colors.js';
+import { setNiceDomain } from '../utils/setNiceDomain.js';
 
 /**
  * Render a barchart
@@ -72,8 +72,6 @@ export class BarChart extends Component {
 
     const chart = svg.append('g').attr('class', 'chart');
 
-    chart.append('g').attr('class', 'yGrid');
-
     chart.append('rect').attr('class', 'tooltip-shadowing-data');
 
     chart.append('g').attr('class', 'xAxis');
@@ -109,7 +107,6 @@ export class BarChart extends Component {
     this.setxAxisAttr(xAxisScale);
     const yAxisScale = this.setyAxisScale();
     this.setyAxisAttr(yAxisScale[this.yAxisSerieIndex]);
-    this.setyGridAttr(yAxisScale[this.yAxisSerieIndex]);
     this.setBarsAttr(xAxisScale, yAxisScale);
     this.setTooltipAttr();
   };
@@ -242,61 +239,16 @@ export class BarChart extends Component {
   };
 
   /**
-   * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
-   * @param {*} serie - the serie for which the domain is built
-   * @param {*} index - the index of this serie in the table this.props.dataset and this.props.series
-   * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain and the step value
-   */
-  setyDomain = (serie, index) => {
-    const max = d3.max(this.props.dataset, (data) => data.y[index]);
-    const min = serie.isFromZero
-      ? 0
-      : d3.min(this.props.dataset, (data) => data.y[index]);
-
-    const delta = max - min;
-    const step = delta / 3;
-
-    const rounder = 10 ** Math.floor(Math.log10(step));
-    const stepRounded = Math.ceil(step / rounder) * rounder;
-
-    const minRounded =
-      min === 0
-        ? 0
-        : min - Math.floor(min / stepRounded) * stepRounded >= stepRounded / 3
-        ? Math.floor(min / stepRounded) * stepRounded
-        : Math.floor(min / stepRounded) * stepRounded - stepRounded;
-    const maxRounded = Math.ceil(max / stepRounded) * stepRounded;
-
-    return {
-      minRounded: minRounded,
-      maxRounded: maxRounded,
-      stepRounded: stepRounded,
-    };
-  };
-
-  /**
-   * set the tick values according to the ydomain from this.setyDomain()
-   * @returns {array} - table of value to be used as tick values by both the y axis and the y grid
-   */
-  setTicksValues = () => {
-    const { minRounded, maxRounded, stepRounded } = this.setyDomain(
-      this.props.series[this.yAxisSerieIndex],
-      this.yAxisSerieIndex
-    );
-    return new Array(
-      fixJSfloatError((maxRounded - minRounded) / stepRounded + 1)
-    )
-      .fill(null)
-      .map((value, index) => fixJSfloatError(minRounded + index * stepRounded));
-  };
-
-  /**
-   * set the y Axis scale (range and domain). use the enlarge domain provided by this.setyDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
+   * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
    * @returns {function} - a function to be used to convert data in chart position/lenght
    */
   setyAxisScale = () => {
     return this.props.series.map((serie, index) => {
-      const { minRounded, maxRounded } = this.setyDomain(serie, index);
+      const { minRounded, maxRounded } = setNiceDomain(
+        serie.isFromZero,
+        this.props.dataset.map((data) => data.y[index]),
+        3
+      );
       return d3
         .scaleLinear()
         .range([this.chartHeight, 0])
@@ -305,15 +257,23 @@ export class BarChart extends Component {
   };
 
   /**
-   * set attributes and styling of the y Axis, use the ticks from this.setTickValues()
+   * set attributes and styling of the y Axis, use the ticks to make the grid
    */
   setyAxisAttr = (yAxisScale) => {
+    const { ticksValues } = setNiceDomain(
+      this.props.series[this.yAxisSerieIndex].isFromZero,
+      this.props.dataset.map((data) => data.y[this.yAxisSerieIndex]),
+      3
+    );
     const yAxis = d3
       .select(this.svgRootNode)
       .select('.yAxis')
       .attr('transform', 'translate(' + this.chartWidth + ', 0)')
       .call(
-        d3.axisRight(yAxisScale).tickSize(0).tickValues(this.setTicksValues())
+        d3
+          .axisRight(yAxisScale)
+          .tickSize(-this.chartWidth)
+          .tickValues(ticksValues)
       );
 
     yAxis.select('path.domain').attr('stroke', 'none');
@@ -324,31 +284,14 @@ export class BarChart extends Component {
       .attr('fill', colors.tertiaryAlt)
       .attr('transform', 'translate(' + this.margin.right / 2 + ', 0)')
       .attr('text-anchor', 'middle');
-  };
 
-  /**
-   * set attributes and styling of the y Grid, use the ticks from this.setTickValues()
-   */
-  setyGridAttr = (yAxisScale) => {
-    const yGrid = d3
-      .select(this.svgRootNode)
-      .select('.yGrid')
-      .call(
-        d3
-          .axisRight(yAxisScale)
-          .tickSize(this.chartWidth)
-          .tickFormat('')
-          .tickValues(this.setTicksValues())
-      );
-    yGrid
+    yAxis
       .selectAll('.tick line')
       .attr('stroke', colors.lightGrey)
       .attr('stroke-dasharray', 2)
       .attr('stroke-width', 1)
-      .filter((line) => line === this.setTicksValues()[0])
+      .filter((line) => line === ticksValues[0])
       .attr('stroke', 'none');
-
-    yGrid.select('path.domain').attr('stroke', 'none');
   };
 
   /**
