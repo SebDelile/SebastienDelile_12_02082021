@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { colors } from '../utils/colors.js';
 import { setNiceDomain } from '../utils/setNiceDomain.js';
+import { transitionSettings } from '../utils/transitionSettings.js';
 
 /**
  * Render a barchart
@@ -10,7 +11,9 @@ import { setNiceDomain } from '../utils/setNiceDomain.js';
  * @param {array} props.title - the title of the chart
  * @param {object} props.xAxis - the details of the x Axis data (name, unit)
  * @param {array} props.series -  is a table of object, each one contains the details of the data serie (name, unit, color, starting from zero or not, y axis displayed or not). Make sure the sequence of serie is the same between this and series and dataset
- * @param {array} props.dataset - the processed data to make the barchart. Aray of object, object avec a key "x" containing x value and a key "y" containing a table with a y value for each serie.
+ * @param {array} props.dataset - the processed data to make the barchart. Array of object, with a key "x" containing x value and a key "y" containing a table with a y value for each serie.
+ * @param {number} props.containerWidth - the width of the container provided by ChartContainer
+ * @param {number} props.containerHeight - the height of the container provided by ChartContainer
  * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
  * @param {number} chartWidth - the width of the chart (container - margins)
  * @param {number} chartHeight - the height of the chart (container - margins)
@@ -38,21 +41,21 @@ export class BarChart extends Component {
    * Initialize the chart with create chart and then put the data inside
    */
   componentDidMount() {
-    this.createBarChart();
-    this.updateBarChart();
+    this.createChart();
+    this.updateChart();
   }
 
   /**
    * Update all the chart, including axis size, position ... Might be launch on window resize
    */
   componentDidUpdate() {
-    this.updateBarChart();
+    this.updateChart();
   }
 
   /**
    * Create and append all the element in the chart. Must be call only once to avoid mismatch between DOM and shadow DOM (so called by componentDidMount)
    */
-  createBarChart = () => {
+  createChart = () => {
     const svg = d3.select(this.svgRootNode);
 
     svg.append('text').attr('class', 'title');
@@ -98,7 +101,7 @@ export class BarChart extends Component {
   /**
    * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
-  updateBarChart = () => {
+  updateChart = () => {
     this.setSvgAttr();
     this.setTitleAttr();
     this.setLegendAttr();
@@ -349,8 +352,8 @@ export class BarChart extends Component {
         .on('mouseover', this.makeTooltipAppear)
         .on('mouseout', this.makeTooltipDisappear)
         .transition()
-        .duration(1000)
-        .ease(d3.easeCubicOut)
+        .duration(transitionSettings.duration)
+        .ease(transitionSettings.ease)
         .attr('d', (data) =>
           this.drawBar(
             xAxisScale(data.x),

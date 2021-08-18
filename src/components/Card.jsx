@@ -1,14 +1,37 @@
 import { Component } from 'react';
 import styled from 'styled-components';
+import * as d3 from 'd3';
 import { giveOpacityToColorHex } from '../utils/giveOpacityToColorHex.js';
 import { putThousandSeparator } from '../utils/putThousandSeparator.js';
 import { colors } from '../utils/colors.js';
+import { transitionSettings } from '../utils/transitionSettings.js';
 
 export class Card extends Component {
-  constructor(props) {
-    super(props);
-    this.stuff = null;
+  animateValue = () => {
+    const rounder = 5 * 2 ** (Math.floor(Math.log10(this.props.value)) - 1);
+    d3.select(this.spanValue)
+      .text(0)
+      .transition()
+      .duration(transitionSettings.duration)
+      .ease(transitionSettings.ease)
+      .tween('spanValue', () => {
+        let i = d3.interpolateRound(
+          this.spanValue.textContent,
+          this.props.value
+        );
+        return (t) => {
+          this.spanValue.textContent =
+            t === 1
+              ? putThousandSeparator(this.props.value)
+              : putThousandSeparator(Math.floor(i(t) / rounder) * rounder);
+        };
+      });
+  };
+
+  componentDidMount() {
+    this.animateValue();
   }
+
   render() {
     return (
       <Container>
@@ -17,7 +40,7 @@ export class Card extends Component {
             <Icon src={this.props.icon} />
           </IconShape>
           <Value>
-            {putThousandSeparator(this.props.value)}
+            <span ref={(el) => (this.spanValue = el)}></span>
             {this.props.unit}
           </Value>
           <Name>{this.props.name}</Name>

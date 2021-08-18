@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as d3 from 'd3';
 import { colors } from '../utils/colors.js';
 import { setNiceDomain } from '../utils/setNiceDomain.js';
+import { transitionSettings } from '../utils/transitionSettings.js';
 
 /**
  * Render a linechart
@@ -275,13 +276,21 @@ export class LineChart extends Component {
       ...this.props.dataset,
       rightExtrapolation,
     ];
-    d3.select(this.svgRootNode)
+    const path = d3
+      .select(this.svgRootNode)
       .select('.line')
       .datum(extrapolatedDataset)
       .attr('d', this.drawLine(xAxisScale, yAxisScale))
       .attr('stroke', 'url(#lineGradient)')
       .attr('stroke-width', 2)
       .attr('fill', 'none');
+    path
+      .attr('stroke-dasharray', path.node().getTotalLength())
+      .attr('stroke-dashoffset', path.node().getTotalLength())
+      .transition()
+      .duration(transitionSettings.duration)
+      .ease(transitionSettings.ease)
+      .attr('stroke-dashoffset', 0);
   };
 
   /**
