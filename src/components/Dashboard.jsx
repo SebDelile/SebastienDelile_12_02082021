@@ -59,10 +59,11 @@ export class Dashboard extends Component {
           <AverageSessions data={this.state.userAverageSessions} />
           <Performance data={this.state.userPerformance} />
           <AverageScore
-            data={
-              this.state.userMainData.todayScore ||
-              this.state.userMainData.score
-            }
+            data={{
+              value: this.state.userMainData.hasOwnProperty('todayScore')
+                ? this.state.userMainData.todayScore
+                : this.state.userMainData.score,
+            }}
           />
           <KeyData data={this.state.userMainData.keyData} />
         </Container>
