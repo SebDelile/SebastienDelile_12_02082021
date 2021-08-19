@@ -29,7 +29,7 @@ export class Dashboard extends Component {
       `/user/${userId}/average-sessions`,
       false
     );
-    const userPerformance = getData(`/user/${userId}performance`, false);
+    const userPerformance = getData(`/user/${userId}/performance`, false);
     this.setState({
       userMainData: userMainData,
       userActivity: userActivity,
@@ -83,5 +83,9 @@ const Container = styled.main`
   grid-template-columns: repeat(4, 1fr);
   justify-items: stretch;
   align-items: stretch;
-  gap: 2rem;
+  gap: 1rem;
+
+  @media only screen and (min-width: 80rem) {
+    gap: 2rem;
+  }
 `;
