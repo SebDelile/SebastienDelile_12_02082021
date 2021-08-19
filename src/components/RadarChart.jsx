@@ -3,12 +3,13 @@ import * as d3 from 'd3';
 import { giveOpacityToColorHex } from '../utils/giveOpacityToColorHex.js';
 import { colors } from '../utils/colors.js';
 import { transitionSettings } from '../utils/transitionSettings.js';
+import { getxyFromPolar } from '../utils/getxyFromPolar.js';
 
 /**
  * Render a radarchart (spiderchart)
  * @extends Component
  * @param {object} props
- * @param {array} props.title - the title of the chart
+ * @param {string} props.title - the title of the chart
  * @param {object} props.Axis - the details of the Axis data (key and name)
  * @param {array} props.dataset - the processed data to make the chart. Array of object, with a key "x" containing the axis index and a key "y" containing a y value.
  * @param {number} props.containerWidth - the width of the container provided by ChartContainer
@@ -16,7 +17,8 @@ import { transitionSettings } from '../utils/transitionSettings.js';
  * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
  * @param {number} chartWidth - the width of the chart (container - margins)
  * @param {number} chartHeight - the height of the chart (container - margins)
- * @param {function} AxisLabel - a function to convert x data into readable label for the axis
+ * @param {object} chartCenter - the x and y coordinates of the chart center
+ * @param {number} chartRadius - the radius of the chart (min between chartWidth/2 and chartHeight/2)
  */
 
 export class RadarChart extends Component {
@@ -32,6 +34,13 @@ export class RadarChart extends Component {
       this.props.containerWidth - this.margin.left - this.margin.right;
     this.chartHeight =
       this.props.containerHeight - this.margin.top - this.margin.bottom;
+    this.chartCenter = {
+      x: Math.round(this.chartWidth / 2),
+      y: Math.round(this.chartHeight / 2),
+    };
+    this.chartRadius = Math.round(
+      d3.min([this.chartWidth, this.chartHeight]) / 2
+    );
   }
 
   /**
@@ -132,12 +141,9 @@ export class RadarChart extends Component {
    * @returns {function} - a function to be used to convert data in chart position/lenght. axis origin (before rotation) is horizontal-left to right
    */
   setAxisScale = () => {
-    const radarRadius = Math.floor(
-      d3.min([this.chartWidth, this.chartHeight]) / 2
-    );
     return d3
       .scaleLinear()
-      .range([0, radarRadius])
+      .range([0, this.chartRadius])
       .domain(d3.extent(this.props.scales));
   };
 
@@ -152,17 +158,12 @@ export class RadarChart extends Component {
       .attr('font-size', 12)
       .attr('text-anchor', 'middle')
       .attr('fill', 'white')
-      .attr(
-        'transform',
-        (axis) =>
-          `translate(${this.xyCoordinates(axis.key, axisScale(320)).x},
-          ${
-            this.xyCoordinates(
-              axis.key,
-              axisScale(d3.max(this.props.scales) * 1.25)
-            ).y + 6
-          })`
-      );
+      .attr('transform', (axis) => {
+        axis.value = d3.max(this.props.scales) * 1.25;
+        return `translate(${this.xyCoordinates(axis, axisScale).x}, ${
+          this.xyCoordinates(axis, axisScale).y + 4
+        })`;
+      });
   };
 
   /**
@@ -185,8 +186,8 @@ export class RadarChart extends Component {
   drawPath = (axisScale) => {
     return d3
       .line(
-        (d) => this.xyCoordinates(d.key, axisScale(d.value)).x,
-        (d) => this.xyCoordinates(d.key, axisScale(d.value)).y
+        (d) => this.xyCoordinates(d, axisScale).x,
+        (d) => this.xyCoordinates(d, axisScale).y
       )
       .curve(d3.curveLinearClosed);
   };
@@ -202,10 +203,9 @@ export class RadarChart extends Component {
       .attr('stroke', 'none')
       .attr('fill', giveOpacityToColorHex(colors.primaryAlt, 0.7))
       .attr('d', () => {
-        const goToChartCenter = `M${this.chartWidth / 2} ${
-          this.chartHeight / 2
-        } `;
-        return `${goToChartCenter.repeat(this.props.axis.length)} z`;
+        return `${`M${this.chartCenter.x} ${this.chartCenter.y} `.repeat(
+          this.props.axis.length
+        )} z`;
       })
       .transition()
       .duration(transitionSettings.duration)
@@ -225,14 +225,8 @@ export class RadarChart extends Component {
       .enter()
       .append('circle')
       .attr('class', 'data-point')
-      .attr(
-        'cx',
-        (data) => this.xyCoordinates(data.key, axisScale(data.value)).x
-      )
-      .attr(
-        'cy',
-        (data) => this.xyCoordinates(data.key, axisScale(data.value)).y
-      )
+      .attr('cx', (data) => this.xyCoordinates(data, axisScale).x)
+      .attr('cy', (data) => this.xyCoordinates(data, axisScale).y)
       .attr('fill', 'white')
       .attr('stroke', 'rgba(255, 255, 255, 0.2)')
       .attr('r', 0)
@@ -323,9 +317,8 @@ export class RadarChart extends Component {
       .attr(
         'transform',
         `translate(${
-          this.xyCoordinates(data.key, axisScale(data.value)).x +
-          tooltipBoxXShift
-        },${this.xyCoordinates(data.key, axisScale(data.value)).y - 32})`
+          this.xyCoordinates(data, axisScale).x + tooltipBoxXShift
+        },${this.xyCoordinates(data, axisScale).y - 32})`
       )
       .attr('opacity', 1);
 
@@ -356,19 +349,17 @@ export class RadarChart extends Component {
   };
 
   /**
-   * a function to transform an axis key (leading to angle) and a value (already passed to the scale) to x/y coordinates on the chart
-   * @param {*} axisKey - the key of the axis to determine the angle of the axis on the chart (PI/2 additionnal angle is needed to have a bottom-up start axis)
-   * @param {*} scaledValue  - the value after passing the scale function
+   * a function to transform an axis key (leading to angle) and a value to x/y coordinates on the chart. Need the scale function.
+   * @param {object} d - the data point containing a key key and a key value
+   * @param {function} scaledValue  - the value after passing the scale function
    * @returns {object} - the x and y coordinates to plot the point in the chart
    */
-  xyCoordinates = (axisKey, scaledValue) => {
-    const angle =
-      (axisKey / this.props.axis.length) * (2 * Math.PI) + Math.PI / 2;
-    return {
-      x: this.chartWidth / 2 + Math.cos(angle) * scaledValue,
-      y: this.chartHeight / 2 - Math.sin(angle) * scaledValue,
-    };
-  };
+  xyCoordinates = (d, axisScale) =>
+    getxyFromPolar(
+      (d.key / this.props.axis.length) * 360 + 90,
+      axisScale(d.value),
+      this.chartCenter
+    );
 
   /**
    * Render the component.
