@@ -3,12 +3,13 @@ import * as d3 from 'd3';
 import { colors } from '../utils/colors.js';
 import { setNiceDomain } from '../utils/setNiceDomain.js';
 import { transitionSettings } from '../utils/transitionSettings.js';
+import { appendMultilineSvgText } from '../utils/appendMultilineSvgText.js';
 
 /**
  * Render a linechart
  * @extends Component
  * @param {object} props
- * @param {array} props.title - the title of the chart
+ * @param {string} props.title - the title of the chart
  * @param {object} props.xAxis - the details of the x Axis data (name, unit)
  * @param {object} props.serie -  the details of the data serie (name, unit, color)
  * @param {array} props.dataset - the processed data to make the linechart. Array of object, with a key "x" containing x value and a key "y" containing a y value.
@@ -110,9 +111,6 @@ export class LineChart extends Component {
    * set attributes and styling of the title of the chart. Set the title on multi-line if needed
    */
   setTitleAttr = () => {
-    const titleAsArray = this.props.title.split(' ');
-    const titleMaxWidth = this.chartWidth * 0.8;
-
     const title = d3
       .select(this.svgRootNode)
       .select('.title')
@@ -122,29 +120,11 @@ export class LineChart extends Component {
       )
       .attr('font-size', 15)
       .attr('fill', colors.semiTransparentWhite);
-
-    title.selectAll('tspan').remove();
-
-    const buildingLine = d3
-      .select(this.svgRootNode)
-      .append('text')
-      .attr('font-size', 15);
-
-    titleAsArray.forEach((word) => {
-      if (buildingLine.text() === '') {
-        buildingLine.text(word);
-        title.append('tspan').attr('dy', 0).attr('x', 0).text(word);
-      } else {
-        buildingLine.text(buildingLine.text() + ' ' + word);
-        if (buildingLine.node().getBBox().width <= titleMaxWidth) {
-          title.select('tspan:last-of-type').text(buildingLine.text());
-        } else {
-          buildingLine.text(word);
-          title.append('tspan').attr('dy', '1.2em').attr('x', 0).text(word);
-        }
-      }
-    });
-    buildingLine.remove();
+    appendMultilineSvgText(
+      this.props.title,
+      title,
+      this.props.containerWidth * 0.8
+    );
   };
 
   /**
