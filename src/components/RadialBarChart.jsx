@@ -214,7 +214,7 @@ export class RadialBarChart extends Component {
     appendMultilineSvgText(
       this.props.description,
       legendOfWhat,
-      this.chartRadius * 0.8
+      this.chartRadius * 1.2
     );
   };
 
