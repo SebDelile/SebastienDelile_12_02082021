@@ -23,6 +23,7 @@ import propTypes from 'prop-types';
  * @param {number} chartHeight - the height of the chart (container - margins)
  * @param {object} chartCenter - the x and y coordinates of the chart center
  * @param {number} chartRadius - the radius of the chart (min between chartWidth/2 and chartHeight/2)
+ * @param {function} axisScale - the scale function to convert data into position/length, updated in this.updateChart()
  */
 class RadarChart extends Component {
   constructor(props) {
@@ -44,6 +45,7 @@ class RadarChart extends Component {
     this.chartRadius = Math.round(
       d3.min([this.chartWidth, this.chartHeight]) / 2
     );
+    this.axisScale = null;
   }
 
   /**
@@ -104,14 +106,25 @@ class RadarChart extends Component {
    * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
   updateChart = () => {
+    this.axisScale = this.setAxisScale();
     this.setSvgAttr();
     this.setChartAttr();
-    const axisScale = this.setAxisScale();
-    this.setAxisLabelAttr(axisScale);
-    this.setGridAttr(axisScale);
-    this.setAreaAttr(axisScale);
-    this.setDataPointsAttr(axisScale);
+    this.setAxisLabelAttr();
+    this.setGridAttr();
+    this.setAreaAttr();
+    this.setDataPointsAttr();
     this.setTooltipAttr();
+  };
+
+  /**
+   * set the x Axis scale (range and domain).
+   * @returns {function} - a function to be used to convert data in chart position/lenght. axis origin (before rotation) is horizontal-left to right
+   */
+  setAxisScale = () => {
+    return d3
+      .scaleLinear()
+      .range([0, this.chartRadius])
+      .domain(d3.extent(this.props.scales));
   };
 
   /**
@@ -140,21 +153,9 @@ class RadarChart extends Component {
   };
 
   /**
-   * set the x Axis scale (range and domain).
-   * @returns {function} - a function to be used to convert data in chart position/lenght. axis origin (before rotation) is horizontal-left to right
-   */
-  setAxisScale = () => {
-    return d3
-      .scaleLinear()
-      .range([0, this.chartRadius])
-      .domain(d3.extent(this.props.scales));
-  };
-
-  /**
    * set attributes and styling of the axis labels. Axis start from center and are rotated counter-clockwise according to axis.key. use this.xyCoordinate() to plot them.
-   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  setAxisLabelAttr = (axisScale) => {
+  setAxisLabelAttr = () => {
     d3.select(this.svgRootNode)
       .selectAll('.axis-label')
       .text((axis) => axis.name)
@@ -163,8 +164,8 @@ class RadarChart extends Component {
       .attr('fill', 'white')
       .attr('transform', (axis) => {
         axis.value = d3.max(this.props.scales) * 1.25;
-        return `translate(${this.xyCoordinates(axis, axisScale).x}, ${
-          this.xyCoordinates(axis, axisScale).y + 4
+        return `translate(${this.xyCoordinates(axis).x}, ${
+          this.xyCoordinates(axis).y + 4
         })`;
       });
   };
@@ -173,33 +174,31 @@ class RadarChart extends Component {
    * set attributes and styling of the grid, make a table of data for each value in this.props.scales and draw it using this.drawPath()
    * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  setGridAttr = (axisScale) => {
+  setGridAttr = () => {
     d3.select(this.svgRootNode)
       .selectAll('.grid-line')
       .attr('stroke', 'white')
       .attr('stroke-width', 1)
       .attr('fill', 'none')
-      .attr('d', this.drawPath(axisScale));
+      .attr('d', this.drawPath());
   };
 
   /**
    * Make the path of the line according to data. use this.xyCoordinate() to plot it
-   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  drawPath = (axisScale) => {
+  drawPath = () => {
     return d3
       .line(
-        (d) => this.xyCoordinates(d, axisScale).x,
-        (d) => this.xyCoordinates(d, axisScale).y
+        (d) => this.xyCoordinates(d, this.axisScale).x,
+        (d) => this.xyCoordinates(d, this.axisScale).y
       )
       .curve(d3.curveLinearClosed);
   };
 
   /**
    * Set the attributes of the area. path is drawn with this.drawPath()
-   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  setAreaAttr = (axisScale) => {
+  setAreaAttr = () => {
     d3.select(this.svgRootNode)
       .select('.area')
       .datum(this.props.dataset)
@@ -213,14 +212,13 @@ class RadarChart extends Component {
       .transition()
       .duration(LOADING_TRANSITION_SETTINGS.duration)
       .ease(LOADING_TRANSITION_SETTINGS.ease)
-      .attr('d', this.drawPath(axisScale));
+      .attr('d', this.drawPath());
   };
 
   /**
    * set the attribute for the dataPoint to make appear on hovering the chart. initial opacity to 0 to make it invisible. Hovering a point make the tooltip appear. Use this.xyCoordinate() to plot them
-   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  setDataPointsAttr = (axisScale) => {
+  setDataPointsAttr = () => {
     d3.select(this.svgRootNode)
       .select('.data-points')
       .selectAll('.data-point')
@@ -228,16 +226,14 @@ class RadarChart extends Component {
       .enter()
       .append('circle')
       .attr('class', 'data-point')
-      .attr('cx', (data) => this.xyCoordinates(data, axisScale).x)
-      .attr('cy', (data) => this.xyCoordinates(data, axisScale).y)
+      .attr('cx', (data) => this.xyCoordinates(data).x)
+      .attr('cy', (data) => this.xyCoordinates(data).y)
       .attr('fill', 'white')
       .attr('stroke', 'rgba(255, 255, 255, 0.2)')
       .attr('r', 0)
       .attr('stroke-width', 0)
       .attr('opacity', 0)
-      .on('mouseover', (mouseEvent) =>
-        this.makeTooltipAppear(mouseEvent, axisScale)
-      )
+      .on('mouseover', (mouseEvent) => this.makeTooltipAppear(mouseEvent))
       .on('mouseout', this.makeTooltipDisappear);
   };
 
@@ -296,9 +292,8 @@ class RadarChart extends Component {
   /**
    * the function to be passed as call for the data mouseover to make appear the tooltip (tootlip box, text and background + increase r of hovered data). use this.xyCoordinate() to place tooltip
    * @param {object} mouseEvent - the object containing event information
-   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
-  makeTooltipAppear = (mouseEvent, axisScale) => {
+  makeTooltipAppear = (mouseEvent) => {
     const data = mouseEvent.target.__data__;
     const dataCategory = this.props.axis.find(
       (axis) => axis.key === data.key
@@ -320,9 +315,9 @@ class RadarChart extends Component {
       .select('.tooltip-box')
       .attr(
         'transform',
-        `translate(${
-          this.xyCoordinates(data, axisScale).x + tooltipBoxXShift
-        },${this.xyCoordinates(data, axisScale).y - 32})`
+        `translate(${this.xyCoordinates(data).x + tooltipBoxXShift},${
+          this.xyCoordinates(data).y - 32
+        })`
       )
       .attr('opacity', 1);
 
@@ -355,13 +350,12 @@ class RadarChart extends Component {
   /**
    * a function to transform an axis key (leading to angle) and a value to x/y coordinates on the chart. Need the scale function. +90deg is needed to start the chart from the top
    * @param {object} d - the data point containing a key key and a key value
-   * @param {function} scaledValue  - the value after passing the scale function
    * @returns {object} - the x and y coordinates to plot the point in the chart
    */
-  xyCoordinates = (d, axisScale) =>
+  xyCoordinates = (d) =>
     getxyFromPolar(
       (d.key / this.props.axis.length) * 360 + 90,
-      axisScale(d.value),
+      this.axisScale(d.value),
       this.chartCenter
     );
 

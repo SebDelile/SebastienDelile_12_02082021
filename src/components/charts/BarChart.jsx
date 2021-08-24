@@ -22,6 +22,8 @@ import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
  * @param {number} chartHeight - the height of the chart (container - margins)
  * @param {number} yAxisSerieIndex - the index of the serie to use to build the y axis
  * @param {number} headerMargin - the margin.top for both title and legend
+ * @param {function} xAxisScale - the x scale function to convert data into position/length, updated in this.updateChart()
+ * @param {array} yAxisScale - an array containing the y scale functions to convert data into position/length, updated in this.updateChart()
  */
 class BarChart extends Component {
   constructor(props) {
@@ -38,6 +40,8 @@ class BarChart extends Component {
       this.props.containerHeight - this.margin.top - this.margin.bottom;
     this.yAxisSerieIndex = this.props.series.findIndex((serie) => serie.isAxis);
     this.headerMargin = this.margin.top / 3;
+    this.xAxisScale = null;
+    this.yAxisScale = null;
   }
 
   /**
@@ -105,16 +109,48 @@ class BarChart extends Component {
    * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
   updateChart = () => {
+    this.xAxisScale = this.setxAxisScale();
+    this.yAxisScale = this.setyAxisScale();
     this.setSvgAttr();
     this.setTitleAttr();
     this.setLegendAttr();
     this.setChartAttr();
-    const xAxisScale = this.setxAxisScale();
-    this.setxAxisAttr(xAxisScale);
-    const yAxisScale = this.setyAxisScale();
-    this.setyAxisAttr(yAxisScale[this.yAxisSerieIndex]);
-    this.setBarsAttr(xAxisScale, yAxisScale);
+    this.setxAxisAttr();
+    this.setyAxisAttr();
+    this.setBarsAttr();
     this.setTooltipAttr();
+  };
+
+  /**
+   * set the x Axis scale (range and domain). -0.5 and +0.5 in domain lead to equal width for all data point.
+   * @returns {function} - a function to be used to convert data in chart position/lenght
+   */
+  setxAxisScale = () => {
+    return d3
+      .scaleLinear()
+      .range([0, this.chartWidth])
+      .domain([
+        d3.min(this.props.dataset, (data) => data.x) - 0.5,
+        d3.max(this.props.dataset, (data) => data.x) + 0.5,
+      ]);
+  };
+
+  /**
+   * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
+   * @returns {function} - a function to be used to convert data in chart y position/lenght
+   */
+  setyAxisScale = () => {
+    return this.props.series.map((serie, index) => {
+      const { minRounded, maxRounded } = setNiceDomain(
+        serie.isFromZero,
+        this.props.dataset.map((data) => data.y[index]),
+        3
+      );
+      return d3
+        .scaleLinear()
+        .range([this.chartHeight, 0])
+        .domain([minRounded, maxRounded]);
+    });
   };
 
   /**
@@ -203,30 +239,16 @@ class BarChart extends Component {
   };
 
   /**
-   * set the x Axis scale (range and domain). -0.5 and +0.5 in domain lead to equal width for all data point.
-   * @returns {function} - a function to be used to convert data in chart position/lenght
-   */
-  setxAxisScale = () => {
-    return d3
-      .scaleLinear()
-      .range([0, this.chartWidth])
-      .domain([
-        d3.min(this.props.dataset, (data) => data.x) - 0.5,
-        d3.max(this.props.dataset, (data) => data.x) + 0.5,
-      ]);
-  };
-
-  /**
    * set attributes and styling of the x Axis
    */
-  setxAxisAttr = (xAxisScale) => {
+  setxAxisAttr = () => {
     const xAxis = d3
       .select(this.svgRootNode)
       .select('.xAxis')
       .attr('transform', 'translate(0,' + this.chartHeight + ')')
       .call(
         d3
-          .axisBottom(xAxisScale)
+          .axisBottom(this.xAxisScale)
           .tickSize(0)
           .tickValues(this.props.dataset.map((data) => data.x))
           .tickFormat(d3.format('.0f'))
@@ -245,27 +267,9 @@ class BarChart extends Component {
   };
 
   /**
-   * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
-   * @returns {function} - a function to be used to convert data in chart y position/lenght
-   */
-  setyAxisScale = () => {
-    return this.props.series.map((serie, index) => {
-      const { minRounded, maxRounded } = setNiceDomain(
-        serie.isFromZero,
-        this.props.dataset.map((data) => data.y[index]),
-        3
-      );
-      return d3
-        .scaleLinear()
-        .range([this.chartHeight, 0])
-        .domain([minRounded, maxRounded]);
-    });
-  };
-
-  /**
    * set attributes and styling of the y Axis, use the ticks to make the grid
    */
-  setyAxisAttr = (yAxisScale) => {
+  setyAxisAttr = () => {
     const { ticksValues } = setNiceDomain(
       this.props.series[this.yAxisSerieIndex].isFromZero,
       this.props.dataset.map((data) => data.y[this.yAxisSerieIndex]),
@@ -277,7 +281,7 @@ class BarChart extends Component {
       .attr('transform', 'translate(' + this.chartWidth + ', 0)')
       .call(
         d3
-          .axisRight(yAxisScale)
+          .axisRight(this.yAxisScale[this.yAxisSerieIndex])
           .tickSize(-this.chartWidth)
           .tickValues(ticksValues)
       );
@@ -331,10 +335,8 @@ class BarChart extends Component {
 
   /**
    * Set the attributes of the bars. Loop forEach to do it for all series. include the path drawing with this.drawbar() with a bottom-up transition
-   * @param {function} xAxisScale - the x Axis scale function
-   * @param {function} yAxisScale - the y Axis scale function
    */
-  setBarsAttr = (xAxisScale, yAxisScale) => {
+  setBarsAttr = () => {
     this.props.series.forEach((serie, index) => {
       const bars = d3
         .select(this.svgRootNode)
@@ -350,7 +352,7 @@ class BarChart extends Component {
         .append('path')
         .attr('fill', this.props.series[index].color)
         .attr('d', (data) =>
-          this.drawBar(xAxisScale(data.x), this.chartHeight, 0, index)
+          this.drawBar(this.xAxisScale(data.x), this.chartHeight, 0, index)
         )
         .on('mouseover', this.makeTooltipAppear)
         .on('mouseout', this.makeTooltipDisappear)
@@ -359,9 +361,9 @@ class BarChart extends Component {
         .ease(LOADING_TRANSITION_SETTINGS.ease)
         .attr('d', (data) =>
           this.drawBar(
-            xAxisScale(data.x),
+            this.xAxisScale(data.x),
             this.chartHeight,
-            this.chartHeight - yAxisScale[index](data.y[index]),
+            this.chartHeight - this.yAxisScale[index](data.y[index]),
             index
           )
         );

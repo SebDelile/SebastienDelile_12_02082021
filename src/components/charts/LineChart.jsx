@@ -22,6 +22,8 @@ import propTypes from 'prop-types';
  * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
  * @param {number} chartWidth - the width of the chart (container - margins)
  * @param {number} chartHeight - the height of the chart (container - margins)
+ * @param {function} xAxisScale - the x scale function to convert data into position/length, updated in this.updateChart()
+ * @param {function} yAxisScale - the y scale function to convert data into position/length, updated in this.updateChart()
  */
 class LineChart extends Component {
   constructor(props) {
@@ -36,6 +38,8 @@ class LineChart extends Component {
       this.props.containerWidth - this.margin.left - this.margin.right;
     this.chartHeight =
       this.props.containerHeight - this.margin.top - this.margin.bottom;
+    this.xAxisScale = null;
+    this.yAxisScale = null;
   }
 
   /**
@@ -81,33 +85,65 @@ class LineChart extends Component {
     tooltip.append('text').attr('class', 'tooltip-text');
 
     chart.append('circle').attr('class', 'tooltip-focus');
-
-    svg.append('rect').attr('class', 'overlay');
   };
 
   /**
    * The function calling all other functions to update the chart including chart/axis/bars/tooltip/... for content/size/position/...
    */
   updateChart = () => {
+    this.xAxisScale = this.setxAxisScale();
+    this.yAxisScale = this.setyAxisScale();
     this.setSvgAttr();
     this.setTitleAttr();
     this.setChartAttr();
-    const xAxisScale = this.setxAxisScale();
-    this.setxAxisAttr(xAxisScale);
-    const yAxisScale = this.setyAxisScale();
+    this.setxAxisAttr();
     this.setLineGradientAttr();
-    this.setLineAttr(xAxisScale, yAxisScale);
-    this.setOverlayAttr(xAxisScale, yAxisScale);
+    this.setLineAttr();
     this.setTooltipAttr();
   };
 
   /**
-   * set attributes and styling of the svg element (the root of the chart)
+   * set the x Axis scale (range and domain).
+   * @returns {function} - a function to be used to convert data in chart position/lenght
+   */
+  setxAxisScale = () => {
+    return d3
+      .scaleLinear()
+      .range([0, this.chartWidth])
+      .domain([
+        d3.min(this.props.dataset, (data) => data.x) - 0.5,
+        d3.max(this.props.dataset, (data) => data.x) + 0.5,
+      ]);
+  };
+
+  /**
+   * set the y Axis scale (range and domain). range is flipped to have a bottom-up axis.
+   * @returns {function} - a function to be used to convert data in chart position/lenght
+   */
+  setyAxisScale = () => {
+    const { minRounded, maxRounded } = setNiceDomain(
+      false,
+      this.props.dataset.map((data) => data.y),
+      8
+    );
+    return d3
+      .scaleLinear()
+      .range([this.chartHeight, 0])
+      .domain([minRounded, maxRounded]);
+  };
+
+  /**
+   * set attributes and styling of the svg element (the root of the chart). have the mouse event listener to make appear the tooltip
    */
   setSvgAttr = () => {
     d3.select(this.svgRootNode)
       .attr('width', this.props.containerWidth)
-      .attr('height', this.props.containerHeight);
+      .attr('height', this.props.containerHeight)
+      .on('mouseenter', this.makeTooltipAppear)
+      .on('mousemove', (mouseEvent) => {
+        this.makeTooltipUpdate(mouseEvent);
+      })
+      .on('mouseleave', this.makeTooltipDisappear);
   };
 
   /**
@@ -145,30 +181,16 @@ class LineChart extends Component {
   };
 
   /**
-   * set the x Axis scale (range and domain).
-   * @returns {function} - a function to be used to convert data in chart position/lenght
-   */
-  setxAxisScale = () => {
-    return d3
-      .scaleLinear()
-      .range([0, this.chartWidth])
-      .domain([
-        d3.min(this.props.dataset, (data) => data.x) - 0.5,
-        d3.max(this.props.dataset, (data) => data.x) + 0.5,
-      ]);
-  };
-
-  /**
    * set attributes and styling of the x Axis. Convert day number into day letter
    */
-  setxAxisAttr = (xAxisScale) => {
+  setxAxisAttr = () => {
     const xAxis = d3
       .select(this.svgRootNode)
       .select('.xAxis')
       .attr('transform', 'translate(0,' + this.chartHeight + ')')
       .call(
         d3
-          .axisBottom(xAxisScale)
+          .axisBottom(this.xAxisScale)
           .tickSize(0)
           .tickValues(this.props.dataset.map((data) => data.x))
       );
@@ -184,32 +206,14 @@ class LineChart extends Component {
   };
 
   /**
-   * set the y Axis scale (range and domain). range is flipped to have a bottom-up axis.
-   * @returns {function} - a function to be used to convert data in chart position/lenght
-   */
-  setyAxisScale = () => {
-    const { minRounded, maxRounded } = setNiceDomain(
-      false,
-      this.props.dataset.map((data) => data.y),
-      8
-    );
-    return d3
-      .scaleLinear()
-      .range([this.chartHeight, 0])
-      .domain([minRounded, maxRounded]);
-  };
-
-  /**
    * Make the path of the line according to data. rounded smooth using curveCardinal interpolation
-   * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
-   * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
    */
-  drawLine = (xAxisScale, yAxisScale) => {
+  drawLine = () => {
     return (
       d3
         .line(
-          (d) => xAxisScale(d.x),
-          (d) => yAxisScale(d.y)
+          (d) => this.xAxisScale(d.x),
+          (d) => this.yAxisScale(d.y)
         )
         //curveCardinal is the better to fit the design, HOWEVER it can lead to unrealistic values (example :session duration < 0)
         .curve(d3.curveCardinal)
@@ -241,10 +245,8 @@ class LineChart extends Component {
 
   /**
    * Set the attributes of the line. line is drawn with this.drawLine()
-   * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
-   * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
    */
-  setLineAttr = (xAxisScale, yAxisScale) => {
+  setLineAttr = () => {
     //Data are extrapolated to suit the design, HOWEVER, it should be better to plot a barchart for these discrete data (days)
     const leftExtrapolation = {
       x: d3.min(this.props.dataset, (data) => data.x) - 1,
@@ -263,7 +265,7 @@ class LineChart extends Component {
       .select(this.svgRootNode)
       .select('.line')
       .datum(extrapolatedDataset)
-      .attr('d', this.drawLine(xAxisScale, yAxisScale))
+      .attr('d', this.drawLine(this.xAxisScale, this.yAxisScale))
       .attr('stroke', 'url(#lineGradient)')
       .attr('stroke-width', 2)
       .attr('fill', 'none');
@@ -274,24 +276,6 @@ class LineChart extends Component {
       .duration(LOADING_TRANSITION_SETTINGS.duration)
       .ease(LOADING_TRANSITION_SETTINGS.ease)
       .attr('stroke-dashoffset', 0);
-  };
-
-  /**
-   * Set the attribute to the overlay (needed for mouse event on the chart)
-   * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
-   * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
-   */
-  setOverlayAttr = (xAxisScale, yAxisScale) => {
-    d3.select(this.svgRootNode)
-      .select('.overlay')
-      .attr('width', this.props.containerWidth)
-      .attr('height', this.props.containerHeight)
-      .attr('opacity', 0)
-      .on('mouseover', this.makeTooltipAppear)
-      .on('mousemove', (mouseEvent) => {
-        this.makeTooltipUpdate(mouseEvent, xAxisScale, yAxisScale);
-      })
-      .on('mouseout', this.makeTooltipDisappear);
   };
 
   /**
@@ -347,18 +331,21 @@ class LineChart extends Component {
   };
 
   /**
-   * the function to be passed as call for the data mouseover to make update the tooltip (data shadowing, data focus and tootlip box)
+   * the function to be passed as call for the data mouseover to make update the tooltip (data shadowing, data focus and tootlip box). First check avoid crash on last point before leaving
    * @param {object} mouseEvent - the object containing event information
-   * @param {function} xAxisScale - the function to transform data into pixel position on the chart according to x axis
-   * @param {function} yAxisScale - the function to transform data into pixel position on the chart according to y axis
    */
-  makeTooltipUpdate = (mouseEvent, xAxisScale, yAxisScale) => {
+  makeTooltipUpdate = (mouseEvent) => {
+    if (d3.pointer(mouseEvent)[0] < 0) return;
     const svg = d3.select(this.svgRootNode);
     const hoveredDataIndex = Math.floor(
       d3.pointer(mouseEvent)[0] / (this.chartWidth / this.props.dataset.length)
     );
-    const hoveredDataX = xAxisScale(this.props.dataset[hoveredDataIndex].x);
-    const hoveredDataY = yAxisScale(this.props.dataset[hoveredDataIndex].y);
+    const hoveredDataX = this.xAxisScale(
+      this.props.dataset[hoveredDataIndex].x
+    );
+    const hoveredDataY = this.yAxisScale(
+      this.props.dataset[hoveredDataIndex].y
+    );
     const tooltipBoxXShift =
       hoveredDataIndex > this.props.dataset.length / 2
         ? (svg.select('.tooltip-background').node().getBBox().width + 6) * -1
