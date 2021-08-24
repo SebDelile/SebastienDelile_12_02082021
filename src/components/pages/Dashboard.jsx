@@ -105,7 +105,7 @@ Dashboard.propTypes = {
 };
 
 /**
- * The style for the Dashboard component
+ * The style for the Container part of the Dashboard component
  * @memberof Dashboard
  */
 const Container = styled.main`
@@ -128,6 +128,10 @@ const Container = styled.main`
   }
 `;
 
+/**
+ * The style for the LoadingSpinner part of the Dashboard component
+ * @memberof Dashboard
+ */
 const LoadingSpinner = styled.div`
   position: absolute;
   top: calc(50% - 10rem);

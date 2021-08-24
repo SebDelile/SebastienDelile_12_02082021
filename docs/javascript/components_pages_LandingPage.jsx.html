@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: pages</title>
+    <title>JSDoc: Source: components/pages/LandingPage.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,112 +17,107 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: pages</h1>
+    <h1 class="page-title">Source: components/pages/LandingPage.jsx</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>pages</h2>
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description">group all pages</div>
-        
+/**
+ * Render a LandingPage
+ * @memberof pages
+ * @extends Component
+ * @hideconstructor
+ */
+class LandingPage extends Component {
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;Container>
+        &lt;Title>Bienvenue !&lt;/Title>
+        &lt;Message>
+          Utilisez l'un des liens suivants pour afficher le dashboard d'un des
+          utilisateurs :
+        &lt;/Message>
+        &lt;LinkList>
+          &lt;li>
+            &lt;StyledLink to="/user/12">Utilisateur #12&lt;/StyledLink>
+          &lt;/li>
+          &lt;li>
+            &lt;StyledLink to="/user/18">Utilisateur #18&lt;/StyledLink>
+          &lt;/li>
+        &lt;/LinkList>
+      &lt;/Container>
+    );
+  }
+}
 
-        
+/**
+ * The style for the Container part of the Landing component
+ * @memberof LandingPage
+ */
+const Container = styled.main`
+  width: calc(100% - var(--nav-left-width));
+  flex: 1;
+  align-self: flex-end;
+  padding: 2rem var(--main-padding);
+`;
 
+/**
+ * The style for the Title part of the LandingPage component
+ * @memberof LandingPage
+ */
+const Title = styled.h1`
+  padding: 2rem 0;
+  font-weight: 700;
+  font-size: 2.5rem;
+`;
 
-<dl class="details">
+/**
+ * The style for the Message part of the LandingPage component
+ * @memberof LandingPage
+ */
+const Message = styled.p`
+  font-size: 1.5rem;
+  padding: 2rem 0;
+`;
 
-    
+/**
+ * The style for the LinkList part of the LandingPage component
+ * @memberof LandingPage
+ */
+const LinkList = styled.ul`
+  list-style: '➥';
+  padding-left: 4.5rem;
 
-    
+  li {
+    padding: 1rem 0 1rem 0.5rem;
+    font-size: 1.5rem;
+  }
+`;
 
-    
+/**
+ * The style for the StyleLink part of the LandingPage component
+ * @memberof LandingPage
+ */
+const StyledLink = styled(Link)`
+  text-decoration: underline;
+`;
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.jsx.html">index.jsx</a>, <a href="index.jsx.html#line118">line 118</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="pages.Dashboard.html">Dashboard</a></dt>
-            <dd></dd>
-        
-            <dt><a href="pages.ErrorPage.html">ErrorPage</a></dt>
-            <dd></dd>
-        
-            <dt><a href="pages.LandingPage.html">LandingPage</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+export default LandingPage;
+</code></pre>
+        </article>
+    </section>
 
 
 

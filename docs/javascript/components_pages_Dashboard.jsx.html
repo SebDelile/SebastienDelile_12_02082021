@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: components/Dashboard.jsx</title>
+    <title>JSDoc: Source: components/pages/Dashboard.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: components/Dashboard.jsx</h1>
+    <h1 class="page-title">Source: components/pages/Dashboard.jsx</h1>
 
     
 
@@ -29,14 +29,14 @@
             <pre class="prettyprint source linenums"><code>import { Component } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
-import Greetings from './Greetings.jsx';
-import Activity from './Activity';
-import AverageSessions from './AverageSessions';
-import Performance from './Performance';
-import AverageScore from './AverageScore';
-import KeyData from './KeyData';
-import getData from '../services/getData.js';
-import isObjectEmpty from '../utils/isObjectEmpty.js';
+import Greetings from '../dashboard_sections/Greetings.jsx';
+import Activity from '../dashboard_sections/Activity';
+import AverageSessions from '../dashboard_sections/AverageSessions';
+import Performance from '../dashboard_sections/Performance';
+import AverageScore from '../dashboard_sections/AverageScore';
+import KeyData from '../dashboard_sections/KeyData';
+import getData from '../../services/getData.js';
+import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import propTypes from 'prop-types';
 
 /**
@@ -98,8 +98,8 @@ class Dashboard extends Component {
       this.state.userActivitya instanceof Error ||
       this.state.userAverageSessions instanceof Error ||
       this.state.userPerformance instanceof Error;
-    if (isDataNotReady) return null;
-    else if (isDataError) return &lt;Redirect to="/" />;
+    if (isDataNotReady) return &lt;LoadingSpinner />;
+    else if (isDataError) return &lt;Redirect to="/errorpage" />;
     else
       return (
         &lt;Container>
@@ -133,7 +133,7 @@ Dashboard.propTypes = {
 };
 
 /**
- * The style for the Dashboard component
+ * The style for the Container part of the Dashboard component
  * @memberof Dashboard
  */
 const Container = styled.main`
@@ -156,6 +156,29 @@ const Container = styled.main`
   }
 `;
 
+/**
+ * The style for the LoadingSpinner part of the Dashboard component
+ * @memberof Dashboard
+ */
+const LoadingSpinner = styled.div`
+  position: absolute;
+  top: calc(50% - 10rem);
+  left: calc(50% - 10rem + var(--nav-left-width) / 2);
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  border-width: 2rem;
+  border-style: solid;
+  border-color: transparent black black black;
+  animation: spin 1s infinite cubic-bezier(0.3, 0, 0.7, 1) both;
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 export default Dashboard;
 </code></pre>
         </article>
@@ -167,13 +190,13 @@ export default Dashboard;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 16:08:14 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Namespace: pages</title>
+    <title>JSDoc: Source: components/app/App.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,112 +17,75 @@
 
 <div id="main">
 
-    <h1 class="page-title">Namespace: pages</h1>
+    <h1 class="page-title">Source: components/app/App.jsx</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2>pages</h2>
-        
-    
-</header>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import styled from 'styled-components';
+import Dashboard from '../pages/Dashboard.jsx';
+import NavTop from '../global_layout/NavTop.jsx';
+import NavLeft from '../global_layout/NavLeft.jsx';
+import LandingPage from '../pages/LandingPage.jsx';
+import ErrorPage from '../pages/ErrorPage.jsx';
 
-<article>
-    <div class="container-overview">
-    
-        
-            <div class="description">group all pages</div>
-        
+/**
+ * The main component. It contains the router
+ * @memberof app
+ * @extends Component
+ * @hideconstructor
+ */
+class App extends Component {
+  render() {
+    return (
+      &lt;AppContainer>
+        &lt;BrowserRouter>
+          &lt;NavTop />
+          &lt;NavLeft />
+          &lt;Switch>
+            &lt;Route exact path="/">
+              &lt;LandingPage />
+            &lt;/Route>
+            &lt;Route
+              path="/user/:userId"
+              render={(routeProps) => &lt;Dashboard {...routeProps} />}
+            />
+            &lt;Route path="/errorpage">
+              &lt;ErrorPage />
+            &lt;/Route>
+            &lt;Route>
+              &lt;ErrorPage />
+            &lt;/Route>
+          &lt;/Switch>
+        &lt;/BrowserRouter>
+      &lt;/AppContainer>
+    );
+  }
+}
 
-        
+/**
+ * The style for the App component
+ * @memberof App
+ */
+const AppContainer = styled.div`
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+`;
 
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.jsx.html">index.jsx</a>, <a href="index.jsx.html#line118">line 118</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="pages.Dashboard.html">Dashboard</a></dt>
-            <dd></dd>
-        
-            <dt><a href="pages.ErrorPage.html">ErrorPage</a></dt>
-            <dd></dd>
-        
-            <dt><a href="pages.LandingPage.html">LandingPage</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+export default App;
+</code></pre>
+        </article>
+    </section>
 
 
 
