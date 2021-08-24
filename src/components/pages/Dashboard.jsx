@@ -70,7 +70,7 @@ class Dashboard extends Component {
       this.state.userActivitya instanceof Error ||
       this.state.userAverageSessions instanceof Error ||
       this.state.userPerformance instanceof Error;
-    if (isDataNotReady) return null;
+    if (isDataNotReady) return <LoadingSpinner />;
     else if (isDataError) return <Redirect to="/errorpage" />;
     else
       return (
@@ -125,6 +125,25 @@ const Container = styled.main`
 
   @media only screen and (min-width: 80rem) {
     gap: 2rem;
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  position: absolute;
+  top: calc(50% - 10rem);
+  left: calc(50% - 10rem + var(--nav-left-width) / 2);
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  border-width: 2rem;
+  border-style: solid;
+  border-color: transparent black black black;
+  animation: spin 1s infinite cubic-bezier(0.3, 0, 0.7, 1) both;
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
