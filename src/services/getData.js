@@ -1,6 +1,12 @@
 import { MOCKED_DATA } from '../data/MOCKED_DATA.js';
 
-export function getData(route, isFromAPI = true) {
+/**
+ * @memberof services
+ * @param {string} route - the route to get the required data
+ * @param {boolean} isFromAPI - true if the call has to be made to the API, false to get the mocked data
+ * @returns {object} the required data, corresponding to the specified user in the route. Or an error if it fails
+ */
+const getData = (route, isFromAPI = true) => {
   if (isFromAPI) {
     //do a fetch to the API
   } else {
@@ -29,4 +35,6 @@ export function getData(route, isFromAPI = true) {
     );
     return data ? data : new Error('Donnée introuvable');
   }
-}
+};
+
+export default getData;

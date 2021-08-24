@@ -4,9 +4,19 @@ import iconYoga from '../assets/icon-yoga.svg';
 import iconBiking from '../assets/icon-biking.svg';
 import iconSwimming from '../assets/icon-swimming.svg';
 import iconBodybuilding from '../assets/icon-bodybuilding.svg';
-import { colors } from '../utils/colors.js';
+import COLORS from '../utils/COLORS.js';
 
-export class NavLeft extends Component {
+/**
+ * Render a NavLeft component.
+ * @memberof general_layout
+ * @extends Component
+ * @hideconstructor
+ */
+class NavLeft extends Component {
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
   render() {
     return (
       <Container>
@@ -30,6 +40,10 @@ export class NavLeft extends Component {
   }
 }
 
+/**
+ * The style for the Container part of the NavLeft component
+ * @memberof NavLeft
+ */
 const Container = styled.aside`
   position: fixed;
   z-index: 0;
@@ -40,10 +54,14 @@ const Container = styled.aside`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${colors.veryDarkGrey};
+  background-color: ${COLORS.veryDarkGrey};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 `;
 
+/**
+ * The style for the IconsWrapper part of the NavLeft component
+ * @memberof NavLeft
+ */
 const IconsWrapper = styled.ul`
   position: relative;
   z-index: 2;
@@ -55,6 +73,10 @@ const IconsWrapper = styled.ul`
   row-gap: 1.25rem;
 `;
 
+/**
+ * The style for the IconShape part of the NavLeft component
+ * @memberof NavLeft
+ */
 const IconShape = styled.li`
   display: flex;
   justify-content: center;
@@ -70,6 +92,10 @@ const IconShape = styled.li`
   }
 `;
 
+/**
+ * The style for the Icon part of the NavLeft component
+ * @memberof NavLeft
+ */
 const Icon = styled.img`
   height: 1.5rem;
 
@@ -78,6 +104,10 @@ const Icon = styled.img`
   }
 `;
 
+/**
+ * The style for the Disclaimer part of the NavLeft component
+ * @memberof NavLeft
+ */
 const Disclaimer = styled.p`
   position: absolute;
   z-index: 1;
@@ -89,3 +119,5 @@ const Disclaimer = styled.p`
   font-size: 0.75rem;
   white-space: nowrap;
 `;
+
+export default NavLeft;

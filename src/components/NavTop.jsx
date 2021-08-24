@@ -2,9 +2,19 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import logo from '../assets/logo.svg';
-import { colors } from '../utils/colors.js';
+import COLORS from '../utils/COLORS.js';
 
-export class NavTop extends Component {
+/**
+ * Render a NavTop component.
+ * @memberof general_layout
+ * @extends Component
+ * @hideconstructor
+ */
+class NavTop extends Component {
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
   render() {
     return (
       <Container>
@@ -32,6 +42,10 @@ export class NavTop extends Component {
   }
 }
 
+/**
+ * The style for the Container part of the NavLeft component
+ * @memberof NavTop
+ */
 const Container = styled.header`
   z-index: 10;
   width: 100%;
@@ -42,15 +56,23 @@ const Container = styled.header`
   align-items: center;
   padding-left: 1.875rem;
   padding-right: var(--main-padding);
-  background: ${colors.veryDarkGrey};
+  background: ${COLORS.veryDarkGrey};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
 `;
 
+/**
+ * The style for the Logo part of the NavLeft component
+ * @memberof NavTop
+ */
 const Logo = styled.img`
   width: 11rem;
   margin-right: 9rem;
 `;
 
+/**
+ * The style for the Nav part of the NavLeft component
+ * @memberof NavTop
+ */
 const Nav = styled.nav`
   flex: 1;
   max-width: calc(
@@ -58,6 +80,10 @@ const Nav = styled.nav`
   );
 `;
 
+/**
+ * The style for the NavList part of the NavLeft component
+ * @memberof NavTop
+ */
 const NavList = styled.ul`
   list-style: none;
   display: flex;
@@ -66,14 +92,24 @@ const NavList = styled.ul`
   align-items: center;
 `;
 
+/**
+ * The style for the NavItem part of the NavLeft component
+ * @memberof NavTop
+ */
 const NavItem = styled.li`
   font-size: 1.5rem;
   color: white;
 `;
 
+/**
+ * The style for the StyledNavLink part of the NavLeft component
+ * @memberof NavTop
+ */
 const StyledNavLink = styled(NavLink)`
   &:hover,
   &.active {
     text-decoration: underline;
   }
 `;
+
+export default NavTop;

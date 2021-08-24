@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { giveOpacityToColorHex } from '../utils/giveOpacityToColorHex.js';
-import { colors } from '../utils/colors.js';
-import { transitionSettings } from '../utils/transitionSettings.js';
-import { getxyFromPolar } from '../utils/getxyFromPolar.js';
+import giveOpacityToColorHex from '../utils/giveOpacityToColorHex.js';
+import COLORS from '../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import getxyFromPolar from '../utils/getxyFromPolar.js';
+import propTypes from 'prop-types';
+import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
- * Render a radarchart (spiderchart)
+ * Render a radarchart (spiderchart). Exported with curry to ensure the props from CharContainer are well checked
+ * @memberof charts
  * @extends Component
  * @param {object} props
  * @param {string} props.title - the title of the chart
- * @param {object} props.Axis - the details of the Axis data (key and name)
+ * @param {array} props.axis - the details of the Axis data (key and name)
+ * @param {array} props.scales - the value of the ticks to build the grid
  * @param {array} props.dataset - the processed data to make the chart. Array of object, with a key "x" containing the axis index and a key "y" containing a y value.
  * @param {number} props.containerWidth - the width of the container provided by ChartContainer
  * @param {number} props.containerHeight - the height of the container provided by ChartContainer
@@ -20,8 +24,7 @@ import { getxyFromPolar } from '../utils/getxyFromPolar.js';
  * @param {object} chartCenter - the x and y coordinates of the chart center
  * @param {number} chartRadius - the radius of the chart (min between chartWidth/2 and chartHeight/2)
  */
-
-export class RadarChart extends Component {
+class RadarChart extends Component {
   constructor(props) {
     super(props);
     this.margin = {
@@ -52,7 +55,7 @@ export class RadarChart extends Component {
   }
 
   /**
-   * Update all the chart, including axis size, position ... Might be launch on window resize
+   * Update all the chart, including axis size, position ... Might be launched on data update
    */
   componentDidUpdate() {
     this.updateChart();
@@ -148,13 +151,13 @@ export class RadarChart extends Component {
   };
 
   /**
-   * set attributes and styling of the axis labels. Axis start from center and are rotated counter-clockwise according to axis.key + 90deg to allow start from top
+   * set attributes and styling of the axis labels. Axis start from center and are rotated counter-clockwise according to axis.key. use this.xyCoordinate() to plot them.
    * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
   setAxisLabelAttr = (axisScale) => {
     d3.select(this.svgRootNode)
       .selectAll('.axis-label')
-      .text((axis) => axis.title)
+      .text((axis) => axis.name)
       .attr('font-size', 12)
       .attr('text-anchor', 'middle')
       .attr('fill', 'white')
@@ -180,7 +183,7 @@ export class RadarChart extends Component {
   };
 
   /**
-   * Make the path of the line according to data.
+   * Make the path of the line according to data. use this.xyCoordinate() to plot it
    * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
   drawPath = (axisScale) => {
@@ -201,20 +204,20 @@ export class RadarChart extends Component {
       .select('.area')
       .datum(this.props.dataset)
       .attr('stroke', 'none')
-      .attr('fill', giveOpacityToColorHex(colors.primaryAlt, 0.7))
+      .attr('fill', giveOpacityToColorHex(COLORS.primaryAlt, 0.7))
       .attr('d', () => {
         return `${`M${this.chartCenter.x} ${this.chartCenter.y} `.repeat(
           this.props.axis.length
         )} z`;
       })
       .transition()
-      .duration(transitionSettings.duration)
-      .ease(transitionSettings.ease)
+      .duration(LOADING_TRANSITION_SETTINGS.duration)
+      .ease(LOADING_TRANSITION_SETTINGS.ease)
       .attr('d', this.drawPath(axisScale));
   };
 
   /**
-   * set the attribute for the dataPoint to make appear on hovering the chart. initial opacity to 0 to make it invisible
+   * set the attribute for the dataPoint to make appear on hovering the chart. initial opacity to 0 to make it invisible. Hovering a point make the tooltip appear. Use this.xyCoordinate() to plot them
    * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
   setDataPointsAttr = (axisScale) => {
@@ -291,14 +294,15 @@ export class RadarChart extends Component {
   };
 
   /**
-   * the function to be passed as call for the data mouseover to make appear the tooltip (tootlip box, text and background + increase r of hovered data)
+   * the function to be passed as call for the data mouseover to make appear the tooltip (tootlip box, text and background + increase r of hovered data). use this.xyCoordinate() to place tooltip
    * @param {object} mouseEvent - the object containing event information
+   * @param {function} axisScale - the function to transform data into pixel position on the chart according to the axis scale
    */
   makeTooltipAppear = (mouseEvent, axisScale) => {
     const data = mouseEvent.target.__data__;
     const dataCategory = this.props.axis.find(
       (axis) => axis.key === data.key
-    ).title;
+    ).name;
     const svg = d3.select(this.svgRootNode);
 
     svg.select('.tooltip-text').text(`${dataCategory} : ${data.value}`);
@@ -349,7 +353,7 @@ export class RadarChart extends Component {
   };
 
   /**
-   * a function to transform an axis key (leading to angle) and a value to x/y coordinates on the chart. Need the scale function.
+   * a function to transform an axis key (leading to angle) and a value to x/y coordinates on the chart. Need the scale function. +90deg is needed to start the chart from the top
    * @param {object} d - the data point containing a key key and a key value
    * @param {function} scaledValue  - the value after passing the scale function
    * @returns {object} - the x and y coordinates to plot the point in the chart
@@ -374,3 +378,22 @@ export class RadarChart extends Component {
     );
   }
 }
+
+/**
+ * The propTypes for the RadarChart component
+ * @memberof RadarChart
+ */
+RadarChart.propTypes = {
+  title: propTypes.string,
+  axis: propTypes.arrayOf(
+    propTypes.shape({ key: propTypes.number, name: propTypes.string })
+  ).isRequired,
+  scales: propTypes.arrayOf(propTypes.number).isRequired,
+  dataset: propTypes.arrayOf(
+    propTypes.shape({ key: propTypes.number, value: propTypes.number })
+  ).isRequired,
+  containerWidth: propTypes.number.isRequired,
+  containerHeight: propTypes.number.isRequired,
+};
+
+export default ComponentWithCurry(RadarChart);

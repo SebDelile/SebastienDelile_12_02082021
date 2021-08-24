@@ -1,4 +1,8 @@
-export const colors = {
+/**
+ * the colors used within the project
+ * @memberof utils
+ */
+const COLORS = {
   primary: '#e60000',
   primaryAlt: '#ff0101',
   secondary: '#282d30',
@@ -11,3 +15,5 @@ export const colors = {
   veryLightGrey: '#fbfbfb',
   semiTransparentWhite: 'rgba(255, 255, 255, 0.5)',
 };
+
+export default COLORS;

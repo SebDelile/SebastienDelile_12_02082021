@@ -1,10 +1,11 @@
 /**
  * a function to evaluate a text, split it as several lines based on a maximum width, and append it to a target svg-text element.
- * @param {*} text - the text to evaluate
- * @param {*} target - a svg text element selected as d3 node
- * @param {*} maxWidth - the maximum width a line can be without carriage return
+ * @memberof utils
+ * @param {string} text - the text to evaluate
+ * @param {d3Element} target - a svg text node selected as d3 node
+ * @param {number} maxWidth - the maximum width a line can be without carriage return
  */
-export const appendMultilineSvgText = (text, target, maxWidth) => {
+const appendMultilineSvgText = (text, target, maxWidth) => {
   const textAsArray = text.split(' ');
 
   target.selectAll('tspan').remove();
@@ -27,3 +28,5 @@ export const appendMultilineSvgText = (text, target, maxWidth) => {
   });
   buildingLine.remove();
 };
+
+export default appendMultilineSvgText;

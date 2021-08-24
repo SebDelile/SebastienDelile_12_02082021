@@ -1,13 +1,30 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
-import { giveOpacityToColorHex } from '../utils/giveOpacityToColorHex.js';
-import { putThousandSeparator } from '../utils/putThousandSeparator.js';
-import { colors } from '../utils/colors.js';
-import { transitionSettings } from '../utils/transitionSettings.js';
-import { animateDigits } from '../utils/animateDigits.js';
+import giveOpacityToColorHex from '../utils/giveOpacityToColorHex.js';
+import putThousandSeparator from '../utils/putThousandSeparator.js';
+import COLORS from '../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import animateDigits from '../utils/animateDigits.js';
+import propTypes from 'prop-types';
 
-export class Card extends Component {
+/**
+ * Render the card component
+ * @memberof charts
+ * @extends Component
+ * @hideconstructor
+ * @param {object} props
+ * @param {string} props.key - a key due to the map operation
+ * @param {string} props.name - the name of the card content
+ * @param {string} props.unit - the unit corresponding to the card content
+ * @param {string} props.icon - the icon corresponding to the card content
+ * @param {number} props.value - the value corresponding to the card content
+ * @param {string} props.color - the color of the icon shape
+ */
+class Card extends Component {
+  /**
+   * set an animation on the mount to make the digits to increase from 0 to final value. Number is rendered with a coma thousand separator
+   */
   componentDidMount() {
     const animationStep =
       5 * 2 ** (Math.floor(Math.log10(this.props.value)) - 1);
@@ -16,11 +33,15 @@ export class Card extends Component {
       0,
       this.props.value,
       animationStep,
-      transitionSettings,
+      LOADING_TRANSITION_SETTINGS,
       putThousandSeparator
     );
   }
 
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
   render() {
     return (
       <Container>
@@ -39,14 +60,34 @@ export class Card extends Component {
   }
 }
 
+/**
+ * The propTypes for the Card component
+ * @memberof Card
+ */
+Card.propTypes = {
+  name: propTypes.string.isRequired,
+  unit: propTypes.string,
+  icon: propTypes.string.isRequired,
+  value: propTypes.number.isRequired,
+  color: propTypes.string.isRequired,
+};
+
+/**
+ * The style for the Container part of the Card component
+ * @memberof Card
+ */
 const Container = styled.div`
-  background-color: ${colors.veryLightGrey};
+  background-color: ${COLORS.veryLightGrey};
   border-radius: 0.375rem;
   display: flex;
   justify-content: space-arround;
   align-items: center;
 `;
 
+/**
+ * The style for the ContentGrid part of the Card component
+ * @memberof Card
+ */
 const ContentGrid = styled.div`
   display: grid;
   grid-template-areas:
@@ -66,6 +107,10 @@ const ContentGrid = styled.div`
   }
 `;
 
+/**
+ * The style for the IconShape part of the Card component
+ * @memberof Card
+ */
 const IconShape = styled.div`
   grid-area: icon;
   display: flex;
@@ -82,6 +127,10 @@ const IconShape = styled.div`
   }
 `;
 
+/**
+ * The style for the Icon part of the Card component
+ * @memberof Card
+ */
 const Icon = styled.img`
   height: 1rem;
 
@@ -90,9 +139,13 @@ const Icon = styled.img`
   }
 `;
 
+/**
+ * The style for the Value part of the Card component
+ * @memberof Card
+ */
 const Value = styled.p`
   grid-area: value;
-  color: ${colors.secondary};
+  color: ${COLORS.secondary};
   font-size: 16px;
   font-weight: 700;
 
@@ -105,8 +158,14 @@ const Value = styled.p`
   }
 `;
 
+/**
+ * The style for the Name part of the Card component
+ * @memberof Card
+ */
 const Name = styled.p`
   grid-area: name;
   font-size: 14px;
-  color: ${colors.tertiary};
+  color: ${COLORS.tertiary};
 `;
+
+export default Card;

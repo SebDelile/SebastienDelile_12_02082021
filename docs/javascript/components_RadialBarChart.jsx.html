@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/RadialBarChart.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/RadialBarChart.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from 'react';
+import * as d3 from 'd3';
+import COLORS from '../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import appendMultilineSvgText from '../utils/appendMultilineSvgText.js';
+import getxyFromPolar from '../utils/getxyFromPolar.js';
+import animateDigits from '../utils/animateDigits.js';
+import propTypes from 'prop-types';
+import ComponentWithCurry from '../utils/ComponentWithCurry.js';
+
+/**
+ * Render a radarchart (spiderchart). Exported with curry to ensure the props from CharContainer are well checked
+ * @memberof charts
+ * @extends Component
+ * @param {object} props
+ * @param {string} props.title - the title of the chart
+ * @param {number} props.value - the processed data to make the chart. a unique value
+ * @param {string} props.description - the few words describing the value
+ * @param {number} props.containerWidth - the width of the container provided by ChartContainer
+ * @param {number} props.containerHeight - the height of the container provided by ChartContainer
+ * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
+ * @param {number} chartWidth - the width of the chart (container - margins)
+ * @param {number} chartHeight - the height of the chart (container - margins)
+ * @param {object} chartCenter - the x and y coordinates of the chart center
+ * @param {number} chartRadius - the radius of the chart (min between chartWidth/2 and chartHeight/2)
+ */
+class RadialBarChart extends Component {
+  constructor(props) {
+    super(props);
+    this.margin = {
+      top: this.props.containerHeight * 0.2,
+      bottom: this.props.containerHeight * 0.2,
+      left: this.props.containerWidth * 0.2,
+      right: this.props.containerWidth * 0.2,
+    };
+    this.chartWidth =
+      this.props.containerWidth - this.margin.left - this.margin.right;
+    this.chartHeight =
+      this.props.containerHeight - this.margin.top - this.margin.bottom;
+    this.chartCenter = {
+      x: Math.round(this.chartWidth / 2),
+      y: Math.round(this.chartHeight / 2),
+    };
+    this.chartRadius = Math.round(
+      d3.min([this.chartWidth, this.chartHeight]) / 2
+    );
+  }
+
+  /**
+   * Initialize the chart with create chart and then put the data inside
+   */
+  componentDidMount() {
+    this.createChart();
+    this.updateChart();
+  }
+
+  /**
+   * Update all the chart, including axis size, position ... Might be launched on data update
+   */
+  componentDidUpdate() {
+    this.updateChart();
+  }
+
+  /**
+   * Create and append all the element in the chart. Must be call only once to avoid mismatch between DOM and shadow DOM (so called by componentDidMount)
+   */
+  createChart = () => {
+    const svg = d3.select(this.svgRootNode);
+
+    svg.append('text').attr('class', 'title');
+
+    const chart = svg.append('g').attr('class', 'chart');
+
+    chart.append('circle').attr('class', 'circular-background');
+
+    chart.append('path').attr('class', 'radial-bar');
+
+    chart.append('text').attr('class', 'legend-value');
+    chart.append('text').attr('class', 'legend-description');
+  };
+
+  /**
+   * The function calling all other functions to update the chart including chart/axis/bars/... for content/size/position/...
+   */
+  updateChart = () => {
+    this.setSvgAttr();
+    this.setTitleAttr();
+    this.setChartAttr();
+    this.setCircularBackgroundAttr();
+    this.setRadialBarAttr();
+    this.setLegendAttr();
+  };
+
+  /**
+   * set attributes and styling of the svg element (the root of the chart).
+   */
+  setSvgAttr = () => {
+    d3.select(this.svgRootNode)
+      .attr('width', this.props.containerWidth)
+      .attr('height', this.props.containerHeight);
+  };
+
+  /**
+   * set attributes and styling of the title of the chart. Set the title on multi-line if needed
+   */
+  setTitleAttr = () => {
+    const title = d3
+      .select(this.svgRootNode)
+      .select('.title')
+      .attr(
+        'transform',
+        'translate(' + this.props.containerWidth * 0.1 + ', 36)'
+      )
+      .attr('font-size', 15)
+      .attr('fill', COLORS.secondaryAlt);
+
+    appendMultilineSvgText(
+      this.props.title,
+      title,
+      this.props.containerWidth * 0.8
+    );
+  };
+
+  /**
+   * set attributes and styling of the effective area of the chart
+   */
+  setChartAttr = () => {
+    d3.select(this.svgRootNode)
+      .select('.chart')
+      .attr('width', this.chartWidth)
+      .attr('height', this.chartHeight)
+      .attr(
+        'transform',
+        'translate(' + this.margin.left + ',' + this.margin.top + ')'
+      );
+  };
+
+  /**
+   * set attributes and styling of the circular background of the chart
+   */
+  setCircularBackgroundAttr = () => {
+    d3.select(this.svgRootNode)
+      .select('.circular-background')
+      .attr('cx', this.chartCenter.x)
+      .attr('cy', this.chartCenter.y)
+      .attr('r', this.chartRadius)
+      .attr('fill', 'white')
+      .attr('stroke', 'none');
+  };
+
+  /**
+   * set attributes and styling of the radial bar of the chart, include an animation on loading
+   */
+  setRadialBarAttr = () => {
+    const startingAngle = 210;
+    const endingAngle = startingAngle - this.props.value * 360;
+    const radialBarRadius = this.chartRadius + 4;
+    const xyCoordinates = (angle) =>
+      getxyFromPolar(angle, radialBarRadius, this.chartCenter);
+    const radialBar = d3
+      .select(this.svgRootNode)
+      .select('.radial-bar')
+      .attr(
+        'd',
+        `M${xyCoordinates(startingAngle).x} ${
+          xyCoordinates(startingAngle).y
+        } A ${radialBarRadius} ${radialBarRadius} 0 0 1 ${
+          xyCoordinates(endingAngle).x
+        } ${xyCoordinates(endingAngle).y}`
+      )
+      .attr('fill', 'none')
+      .attr('stroke', COLORS.primaryAlt)
+      .attr('stroke-width', 10)
+      .attr('stroke-linecap', 'round');
+    radialBar
+      .attr('stroke-dasharray', radialBar.node().getTotalLength())
+      .attr('stroke-dashoffset', radialBar.node().getTotalLength())
+      .transition()
+      .duration(LOADING_TRANSITION_SETTINGS.duration)
+      .ease(LOADING_TRANSITION_SETTINGS.ease)
+      .attr('stroke-dashoffset', 0);
+  };
+
+  /**
+   * set attributes and styling of the legend of the chart. Include an animation on loading
+   */
+  setLegendAttr = () => {
+    const legendValue = d3
+      .select(this.svgRootNode)
+      .select('.legend-value')
+      .attr('font-size', 26)
+      .style('font-weight', 'bold')
+      .attr('text-anchor', 'middle')
+      .attr(
+        'transform',
+        `translate(${this.chartCenter.x}, ${this.chartCenter.y - 10})`
+      )
+      .attr('fill', COLORS.secondary);
+    animateDigits(
+      legendValue,
+      0,
+      this.props.value * 100,
+      1,
+      LOADING_TRANSITION_SETTINGS,
+      (value) => `${Math.round(value)}%`
+    );
+
+    const description = d3
+      .select(this.svgRootNode)
+      .select('.legend-description')
+      .attr('font-size', 16)
+      .attr('fill', COLORS.tertiary)
+      .attr('text-anchor', 'middle')
+      .attr(
+        'transform',
+        `translate(${this.chartCenter.x}, ${this.chartCenter.y + 14})`
+      );
+
+    appendMultilineSvgText(
+      this.props.description,
+      description,
+      this.chartRadius * 1.2
+    );
+  };
+
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;React.Fragment>
+        &lt;figcaption className="sr-only">{this.props.title}&lt;/figcaption>
+        &lt;svg ref={(node) => (this.svgRootNode = node)} />
+      &lt;/React.Fragment>
+    );
+  }
+}
+
+/**
+ * The propTypes for the RadialBarChart component
+ * @memberof RadialBarChart
+ */
+RadialBarChart.propTypes = {
+  title: propTypes.string,
+  value: propTypes.number.isRequired,
+  description: propTypes.string,
+  containerWidth: propTypes.number.isRequired,
+  containerHeight: propTypes.number.isRequired,
+};
+
+export default ComponentWithCurry(RadialBarChart);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 16:08:14 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

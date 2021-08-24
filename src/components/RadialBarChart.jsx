@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { colors } from '../utils/colors.js';
-import { transitionSettings } from '../utils/transitionSettings.js';
-import { appendMultilineSvgText } from '../utils/appendMultilineSvgText.js';
-import { getxyFromPolar } from '../utils/getxyFromPolar.js';
-import { animateDigits } from '../utils/animateDigits.js';
+import COLORS from '../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import appendMultilineSvgText from '../utils/appendMultilineSvgText.js';
+import getxyFromPolar from '../utils/getxyFromPolar.js';
+import animateDigits from '../utils/animateDigits.js';
+import propTypes from 'prop-types';
+import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
- * Render a radarchart (spiderchart)
+ * Render a radarchart (spiderchart). Exported with curry to ensure the props from CharContainer are well checked
+ * @memberof charts
  * @extends Component
  * @param {object} props
  * @param {string} props.title - the title of the chart
  * @param {number} props.value - the processed data to make the chart. a unique value
+ * @param {string} props.description - the few words describing the value
  * @param {number} props.containerWidth - the width of the container provided by ChartContainer
  * @param {number} props.containerHeight - the height of the container provided by ChartContainer
  * @param {object} margin - the margin top, bottom, left, right for the chart inside its container
@@ -20,7 +24,7 @@ import { animateDigits } from '../utils/animateDigits.js';
  * @param {object} chartCenter - the x and y coordinates of the chart center
  * @param {number} chartRadius - the radius of the chart (min between chartWidth/2 and chartHeight/2)
  */
-export class RadialBarChart extends Component {
+class RadialBarChart extends Component {
   constructor(props) {
     super(props);
     this.margin = {
@@ -51,7 +55,7 @@ export class RadialBarChart extends Component {
   }
 
   /**
-   * Update all the chart, including axis size, position ... Might be launch on window resize
+   * Update all the chart, including axis size, position ... Might be launched on data update
    */
   componentDidUpdate() {
     this.updateChart();
@@ -108,7 +112,7 @@ export class RadialBarChart extends Component {
         'translate(' + this.props.containerWidth * 0.1 + ', 36)'
       )
       .attr('font-size', 15)
-      .attr('fill', colors.secondaryAlt);
+      .attr('fill', COLORS.secondaryAlt);
 
     appendMultilineSvgText(
       this.props.title,
@@ -143,6 +147,7 @@ export class RadialBarChart extends Component {
       .attr('fill', 'white')
       .attr('stroke', 'none');
   };
+
   /**
    * set attributes and styling of the radial bar of the chart, include an animation on loading
    */
@@ -164,15 +169,15 @@ export class RadialBarChart extends Component {
         } ${xyCoordinates(endingAngle).y}`
       )
       .attr('fill', 'none')
-      .attr('stroke', colors.primaryAlt)
+      .attr('stroke', COLORS.primaryAlt)
       .attr('stroke-width', 10)
       .attr('stroke-linecap', 'round');
     radialBar
       .attr('stroke-dasharray', radialBar.node().getTotalLength())
       .attr('stroke-dashoffset', radialBar.node().getTotalLength())
       .transition()
-      .duration(transitionSettings.duration)
-      .ease(transitionSettings.ease)
+      .duration(LOADING_TRANSITION_SETTINGS.duration)
+      .ease(LOADING_TRANSITION_SETTINGS.ease)
       .attr('stroke-dashoffset', 0);
   };
 
@@ -190,21 +195,21 @@ export class RadialBarChart extends Component {
         'transform',
         `translate(${this.chartCenter.x}, ${this.chartCenter.y - 10})`
       )
-      .attr('fill', colors.secondary);
+      .attr('fill', COLORS.secondary);
     animateDigits(
       legendValue,
       0,
       this.props.value * 100,
       1,
-      transitionSettings,
+      LOADING_TRANSITION_SETTINGS,
       (value) => `${Math.round(value)}%`
     );
 
-    const legendOfWhat = d3
+    const description = d3
       .select(this.svgRootNode)
       .select('.legend-description')
       .attr('font-size', 16)
-      .attr('fill', colors.tertiary)
+      .attr('fill', COLORS.tertiary)
       .attr('text-anchor', 'middle')
       .attr(
         'transform',
@@ -213,7 +218,7 @@ export class RadialBarChart extends Component {
 
     appendMultilineSvgText(
       this.props.description,
-      legendOfWhat,
+      description,
       this.chartRadius * 1.2
     );
   };
@@ -231,3 +236,17 @@ export class RadialBarChart extends Component {
     );
   }
 }
+
+/**
+ * The propTypes for the RadialBarChart component
+ * @memberof RadialBarChart
+ */
+RadialBarChart.propTypes = {
+  title: propTypes.string,
+  value: propTypes.number.isRequired,
+  description: propTypes.string,
+  containerWidth: propTypes.number.isRequired,
+  containerHeight: propTypes.number.isRequired,
+};
+
+export default ComponentWithCurry(RadialBarChart);

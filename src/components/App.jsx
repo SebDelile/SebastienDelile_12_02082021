@@ -1,12 +1,18 @@
 import { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import { Dashboard } from './Dashboard.jsx';
-import { NavTop } from './NavTop.jsx';
-import { NavLeft } from './NavLeft.jsx';
-import { ErrorPage } from './ErrorPage.jsx';
+import Dashboard from './Dashboard.jsx';
+import NavTop from './NavTop.jsx';
+import NavLeft from './NavLeft.jsx';
+import ErrorPage from './ErrorPage.jsx';
 
-export class App extends Component {
+/**
+ * The main component. It contains the router
+ * @memberof app
+ * @extends Component
+ * @hideconstructor
+ */
+class App extends Component {
   render() {
     return (
       <AppContainer>
@@ -28,6 +34,10 @@ export class App extends Component {
   }
 }
 
+/**
+ * The style for the App component
+ * @memberof App
+ */
 const AppContainer = styled.div`
   width: 100%;
   min-height: 100%;
@@ -36,3 +46,5 @@ const AppContainer = styled.div`
   justify-content: flex-start;
   align-items: stretch;
 `;
+
+export default App;

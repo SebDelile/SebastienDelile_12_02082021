@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
-import { debounce } from '../utils/debounce';
+import debounce from '../utils/debounce';
 
-export class ChartContainer extends Component {
+/**
+ * Render a chartContainer. This is a template to provide method to the chart containers components in order to pass width and height as props
+ * @memberof dashboard_sections
+ * @extends Component
+ * @param {object} state - the state of the component
+ * @param {boolean} state.isContainerSized - turn to false until the final size is stable, then turn to true to pass the props
+ * @param {number} state.containerWidth - the width of the container
+ * @param {number} state.containerHeight - the height of the container
+ * @param {function} rescale - passing debounce to the method setDimensions in order to have only one instance of this method fro the removeeventlistener
+ */
+class ChartContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,20 +22,33 @@ export class ChartContainer extends Component {
     this.rescale = debounce(this.setDimensions, 500);
   }
 
+  /**
+   * give first values to the state and add event listener on resize
+   */
   componentDidMount() {
     this.setDimensions();
     window.addEventListener('resize', this.resetDimensions);
     window.addEventListener('resize', this.rescale);
   }
+
+  /**
+   * Remove the event listener on unmount
+   */
   componentWillUnmount() {
     window.removeEventListener('resize', this.resetDimensions);
     window.removeEventListener('resize', this.rescale);
   }
 
+  /**
+   * allow to un-render the chart until the size is stabilized
+   */
   resetDimensions = () => {
     if (this.state.isContainerSized) this.setState({ isContainerSized: false });
   };
 
+  /**
+   * set the state with width and height. Is called within a debounce to avoiding multiple call
+   */
   setDimensions = () => {
     this.setState({
       isContainerSized: true,
@@ -34,6 +57,10 @@ export class ChartContainer extends Component {
     });
   };
 
+  /**
+   * Remove children if the size is not established (during debounce). they add the props to the children (only to reactElements)
+   * @returns null or children with additionnal props
+   */
   returnChildrenWithProps = () => {
     return React.Children.map(this.props.children, (child) => {
       if (!this.state.isContainerSized) return null;
@@ -51,6 +78,10 @@ export class ChartContainer extends Component {
     });
   };
 
+  /**
+   * Render the component.
+   * @returns {Reactnode} jsx to be injected in the html
+   */
   render() {
     return (
       <figure
@@ -62,3 +93,5 @@ export class ChartContainer extends Component {
     );
   }
 }
+
+export default ChartContainer;

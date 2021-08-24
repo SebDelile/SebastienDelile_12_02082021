@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { colors } from '../utils/colors.js';
-import { setNiceDomain } from '../utils/setNiceDomain.js';
-import { transitionSettings } from '../utils/transitionSettings.js';
-import { appendMultilineSvgText } from '../utils/appendMultilineSvgText.js';
+import COLORS from '../utils/COLORS.js';
+import setNiceDomain from '../utils/setNiceDomain.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import appendMultilineSvgText from '../utils/appendMultilineSvgText.js';
+import propTypes from 'prop-types';
+import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
- * Render a linechart
+ * Render a linechart. Exported with curry to ensure the props from CharContainer are well checked
+ * @memberof charts
  * @extends Component
  * @param {object} props
  * @param {string} props.title - the title of the chart
@@ -20,7 +23,7 @@ import { appendMultilineSvgText } from '../utils/appendMultilineSvgText.js';
  * @param {number} chartWidth - the width of the chart (container - margins)
  * @param {number} chartHeight - the height of the chart (container - margins)
  */
-export class LineChart extends Component {
+class LineChart extends Component {
   constructor(props) {
     super(props);
     this.margin = {
@@ -44,7 +47,7 @@ export class LineChart extends Component {
   }
 
   /**
-   * Update all the chart, including axis size, position ... Might be launch on window resize
+   * Update all the chart, including axis size, position ... Might be launched on data update
    */
   componentDidUpdate() {
     this.updateChart();
@@ -119,7 +122,7 @@ export class LineChart extends Component {
         'translate(' + this.props.containerWidth * 0.1 + ', 48)'
       )
       .attr('font-size', 15)
-      .attr('fill', colors.semiTransparentWhite);
+      .attr('fill', COLORS.semiTransparentWhite);
     appendMultilineSvgText(
       this.props.title,
       title,
@@ -175,7 +178,7 @@ export class LineChart extends Component {
       .selectAll('text')
       .attr('font-size', 14)
       .attr('text-anchor', 'middle')
-      .attr('fill', colors.semiTransparentWhite)
+      .attr('fill', COLORS.semiTransparentWhite)
       .attr('transform', 'translate(0, 12)')
       .text((data) => this.props.xAxisLabel(data));
   };
@@ -214,7 +217,7 @@ export class LineChart extends Component {
   };
 
   /**
-   * Set the linear gradient attribute for the line path
+   * Set the color linear gradient attribute for the line path
    */
   setLineGradientAttr = () => {
     const gradient = d3
@@ -268,8 +271,8 @@ export class LineChart extends Component {
       .attr('stroke-dasharray', path.node().getTotalLength())
       .attr('stroke-dashoffset', path.node().getTotalLength())
       .transition()
-      .duration(transitionSettings.duration)
-      .ease(transitionSettings.ease)
+      .duration(LOADING_TRANSITION_SETTINGS.duration)
+      .ease(LOADING_TRANSITION_SETTINGS.ease)
       .attr('stroke-dashoffset', 0);
   };
 
@@ -418,3 +421,31 @@ export class LineChart extends Component {
     );
   }
 }
+
+/**
+ * The propTypes for the LineChart component
+ * @memberof LineChart
+ */
+LineChart.propTypes = {
+  title: propTypes.string,
+  xAxis: propTypes.shape({
+    name: propTypes.string,
+    unit: propTypes.string,
+  }),
+  serie: propTypes.shape({
+    name: propTypes.string,
+    unit: propTypes.string,
+    color: propTypes.string,
+  }).isRequired,
+  dataset: propTypes.arrayOf(
+    propTypes.shape({
+      x: propTypes.number,
+      y: propTypes.number,
+    })
+  ).isRequired,
+  xAxisLabel: propTypes.func,
+  containerWidth: propTypes.number.isRequired,
+  containerHeight: propTypes.number.isRequired,
+};
+
+export default ComponentWithCurry(LineChart);

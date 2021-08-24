@@ -1,14 +1,15 @@
 import * as d3 from 'd3';
-import { fixJSfloatError } from './fixJSfloatError';
+import fixJSfloatError from './fixJSfloatError';
 
 /**
  * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
+ * @memberof utils
  * @param {boolean} isFromZero - true if the serie has to be displayed from 0, false otherwise
- * @param {array} data - the data used to make the domain
+ * @param {array} data - the data array used to make the domain
  * @param {number} stepsNumber - the required number of steps (one could be automatically added to display more nicely the minimum data)
  * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain, the step value and the ticks values
  */
-export const setNiceDomain = (isFromZero, data, stepsNumber) => {
+const setNiceDomain = (isFromZero, data, stepsNumber) => {
   const max = d3.max(data);
   const min = isFromZero ? 0 : d3.min(data);
 
@@ -43,3 +44,5 @@ export const setNiceDomain = (isFromZero, data, stepsNumber) => {
     ticksValues: ticksValues,
   };
 };
+
+export default setNiceDomain;

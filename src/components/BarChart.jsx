@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import { colors } from '../utils/colors.js';
-import { setNiceDomain } from '../utils/setNiceDomain.js';
-import { transitionSettings } from '../utils/transitionSettings.js';
+import COLORS from '../utils/COLORS.js';
+import setNiceDomain from '../utils/setNiceDomain.js';
+import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
+import propTypes from 'prop-types';
+import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
- * Render a barchart
+ * Render a barchart. Exported with curry to ensure the props from CharContainer are well checked
+ * @memberof charts
  * @extends Component
  * @param {object} props
- * @param {array} props.title - the title of the chart
+ * @param {string} props.title - the title of the chart
  * @param {object} props.xAxis - the details of the x Axis data (name, unit)
  * @param {array} props.series -  is a table of object, each one contains the details of the data serie (name, unit, color, starting from zero or not, y axis displayed or not). Make sure the sequence of serie is the same between this and series and dataset
  * @param {array} props.dataset - the processed data to make the barchart. Array of object, with a key "x" containing x value and a key "y" containing a table with a y value for each serie.
@@ -20,7 +23,7 @@ import { transitionSettings } from '../utils/transitionSettings.js';
  * @param {number} yAxisSerieIndex - the index of the serie to use to build the y axis
  * @param {number} headerMargin - the margin.top for both title and legend
  */
-export class BarChart extends Component {
+class BarChart extends Component {
   constructor(props) {
     super(props);
     this.margin = {
@@ -46,7 +49,7 @@ export class BarChart extends Component {
   }
 
   /**
-   * Update all the chart, including axis size, position ... Might be launch on window resize
+   * Update all the chart, including axis size, position ... Might be launched on data update
    */
   componentDidUpdate() {
     this.updateChart();
@@ -75,11 +78,11 @@ export class BarChart extends Component {
 
     const chart = svg.append('g').attr('class', 'chart');
 
-    chart.append('rect').attr('class', 'tooltip-shadowing-data');
-
     chart.append('g').attr('class', 'xAxis');
 
     chart.append('g').attr('class', 'yAxis');
+
+    chart.append('rect').attr('class', 'tooltip-shadowing-data');
 
     chart
       .selectAll('g.barsSet')
@@ -139,7 +142,7 @@ export class BarChart extends Component {
       )
       .attr('font-size', 15)
       .attr('alignment-baseline', 'middle')
-      .attr('fill', colors.secondaryAlt)
+      .attr('fill', COLORS.secondaryAlt)
       .text(this.props.title);
   };
 
@@ -160,7 +163,7 @@ export class BarChart extends Component {
       .select('text')
       .attr('font-size', 14)
       .attr('font-family', 'monospace')
-      .attr('fill', colors.tertiary)
+      .attr('fill', COLORS.tertiary)
       .text((serie) => `${serie.name} (${serie.unit})`)
       .attr('dx', 15)
       .attr('alignment-baseline', 'middle');
@@ -230,20 +233,20 @@ export class BarChart extends Component {
       );
     xAxis
       .select('path.domain')
-      .attr('stroke', colors.lightGrey)
+      .attr('stroke', COLORS.lightGrey)
       .attr('stroke-width', 1);
 
     xAxis
       .selectAll('text')
       .attr('font-size', 14)
       .attr('text-anchor', 'middle')
-      .attr('fill', colors.tertiaryAlt)
+      .attr('fill', COLORS.tertiaryAlt)
       .attr('transform', 'translate(0, ' + (this.margin.bottom / 2 - 10) + ')');
   };
 
   /**
    * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
-   * @returns {function} - a function to be used to convert data in chart position/lenght
+   * @returns {function} - a function to be used to convert data in chart y position/lenght
    */
   setyAxisScale = () => {
     return this.props.series.map((serie, index) => {
@@ -284,13 +287,13 @@ export class BarChart extends Component {
     yAxis
       .selectAll('text')
       .attr('font-size', 14)
-      .attr('fill', colors.tertiaryAlt)
+      .attr('fill', COLORS.tertiaryAlt)
       .attr('transform', 'translate(' + this.margin.right / 2 + ', 0)')
       .attr('text-anchor', 'middle');
 
     yAxis
       .selectAll('.tick line')
-      .attr('stroke', colors.lightGrey)
+      .attr('stroke', COLORS.lightGrey)
       .attr('stroke-dasharray', 2)
       .attr('stroke-width', 1)
       .filter((line) => line === ticksValues[0])
@@ -298,12 +301,12 @@ export class BarChart extends Component {
   };
 
   /**
-   * Draw a path to represent the bar inclunding position and size
+   * Draw a path to represent the bar including position and size
    * @param {number} x - starting x position of the bar (bottom-left)
    * @param {number} y - starting y position of the bar (bottom-left)
    * @param {number} height - height of the bar
    * @param {number} index  - index of the serie in the this.props.series table
-   * @returns
+   * @returns {string} - the path to draw a bar with the specified parameters
    */
   drawBar = (x, y, height, index) => {
     const barWidth = 7;
@@ -352,8 +355,8 @@ export class BarChart extends Component {
         .on('mouseover', this.makeTooltipAppear)
         .on('mouseout', this.makeTooltipDisappear)
         .transition()
-        .duration(transitionSettings.duration)
-        .ease(transitionSettings.ease)
+        .duration(LOADING_TRANSITION_SETTINGS.duration)
+        .ease(LOADING_TRANSITION_SETTINGS.ease)
         .attr('d', (data) =>
           this.drawBar(
             xAxisScale(data.x),
@@ -377,7 +380,7 @@ export class BarChart extends Component {
       .attr('y', 0)
       .attr('width', this.chartWidth / this.props.dataset.length + 1)
       .attr('height', this.chartHeight)
-      .attr('fill', colors.grey)
+      .attr('fill', COLORS.grey)
       .style('opacity', 0);
 
     svg.select('.tooltip-box').attr('opacity', 0);
@@ -398,12 +401,12 @@ export class BarChart extends Component {
       .select('.tooltip-background')
       .attr('height', 64)
       .attr('width', 0)
-      .style('fill', colors.primary);
+      .style('fill', COLORS.primary);
   };
 
   /**
    * the function to be passed as call for the data mouseover to make appear the tooltip. add data to the textcontent of the tootip
-   * @param {event} mouseEvent - the fired event on mouseover
+   * @param {object} mouseEvent - the fired event object on mouseover
    */
   makeTooltipAppear = (mouseEvent) => {
     const data = mouseEvent.target.__data__;
@@ -472,3 +475,34 @@ export class BarChart extends Component {
     );
   }
 }
+
+/**
+ * The propTypes for the BarChart component
+ * @memberof BarChart
+ */
+BarChart.propTypes = {
+  title: propTypes.string,
+  xAxis: propTypes.shape({
+    name: propTypes.string,
+    unit: propTypes.string,
+  }),
+  series: propTypes.arrayOf(
+    propTypes.shape({
+      name: propTypes.string,
+      unit: propTypes.string,
+      color: propTypes.string,
+      isAxis: propTypes.bool,
+      isFromZero: propTypes.bool,
+    })
+  ).isRequired,
+  dataset: propTypes.arrayOf(
+    propTypes.shape({
+      x: propTypes.number,
+      y: propTypes.arrayOf(propTypes.number),
+    })
+  ).isRequired,
+  containerWidth: propTypes.number.isRequired,
+  containerHeight: propTypes.number.isRequired,
+};
+
+export default ComponentWithCurry(BarChart);
