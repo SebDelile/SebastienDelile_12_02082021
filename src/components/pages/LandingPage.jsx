@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 /**
- * Render an erroPage
+ * Render a LandingPage
  * @memberof pages
  * @extends Component
  * @hideconstructor
  */
-class ErrorPage extends Component {
+class LandingPage extends Component {
   /**
    * Render the component.
    * @returns {Reactnode} jsx to be injected in the html
@@ -16,11 +16,17 @@ class ErrorPage extends Component {
   render() {
     return (
       <Container>
-        <Title>Erreur !</Title>
-        <Message>La page que vous avez demandée n'existe pas...</Message>
+        <Title>Bienvenue !</Title>
+        <Message>
+          Utilisez l'un des liens suivants pour afficher le dashboard d'un des
+          utilisateurs :
+        </Message>
         <LinkList>
           <li>
-            <StyledLink to="/">Retourner à la page d'accueil</StyledLink>
+            <StyledLink to="/user/12">Utilisateur #12</StyledLink>
+          </li>
+          <li>
+            <StyledLink to="/user/18">Utilisateur #18</StyledLink>
           </li>
         </LinkList>
       </Container>
@@ -29,8 +35,8 @@ class ErrorPage extends Component {
 }
 
 /**
- * The style for the Container part of the ErrorPage component
- * @memberof ErrorPage
+ * The style for the Container part of the Landing component
+ * @memberof LandingPage
  */
 const Container = styled.main`
   width: calc(100% - var(--nav-left-width));
@@ -40,8 +46,8 @@ const Container = styled.main`
 `;
 
 /**
- * The style for the Title part of the ErrorPage component
- * @memberof ErrorPage
+ * The style for the Title part of the LandingPage component
+ * @memberof LandingPage
  */
 const Title = styled.h1`
   padding: 2rem 0;
@@ -50,8 +56,8 @@ const Title = styled.h1`
 `;
 
 /**
- * The style for the Message part of the ErrorPage component
- * @memberof ErrorPage
+ * The style for the Message part of the LandingPage component
+ * @memberof LandingPage
  */
 const Message = styled.p`
   font-size: 1.5rem;
@@ -59,8 +65,8 @@ const Message = styled.p`
 `;
 
 /**
- * The style for the LinkList part of the ErrorPage component
- * @memberof ErrorPage
+ * The style for the LinkList part of the LandingPage component
+ * @memberof LandingPage
  */
 const LinkList = styled.ul`
   list-style: '➥';
@@ -73,11 +79,11 @@ const LinkList = styled.ul`
 `;
 
 /**
- * The style for the StyleLink part of the ErrorPage component
- * @memberof ErrorPage
+ * The style for the StyleLink part of the LandingPage component
+ * @memberof LandingPage
  */
 const StyledLink = styled(Link)`
   text-decoration: underline;
 `;
 
-export default ErrorPage;
+export default LandingPage;

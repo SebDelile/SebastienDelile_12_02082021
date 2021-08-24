@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Dashboard from '../pages/Dashboard.jsx';
 import NavTop from '../global_layout/NavTop.jsx';
 import NavLeft from '../global_layout/NavLeft.jsx';
+import LandingPage from '../pages/LandingPage.jsx';
 import ErrorPage from '../pages/ErrorPage.jsx';
 
 /**
@@ -20,8 +21,11 @@ class App extends Component {
           <NavTop />
           <NavLeft />
           <Switch>
+            <Route exact path="/">
+              <LandingPage />
+            </Route>
             <Route
-              path="/:userId"
+              path="/user/:userId"
               render={(routeProps) => <Dashboard {...routeProps} />}
             />
             <Route>
