@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import COLORS from '../utils/COLORS.js';
-import setNiceDomain from '../utils/setNiceDomain.js';
-import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
-import appendMultilineSvgText from '../utils/appendMultilineSvgText.js';
+import COLORS from '../../utils/COLORS.js';
+import setNiceDomain from '../../utils/setNiceDomain.js';
+import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
+import appendMultilineSvgText from '../../utils/appendMultilineSvgText.js';
+import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
 import propTypes from 'prop-types';
-import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
  * Render a linechart. Exported with curry to ensure the props from CharContainer are well checked

@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import styled from 'styled-components';
-import Card from './Card.jsx';
-import iconCalorie from '../assets/icon-calorie.svg';
-import iconProtein from '../assets/icon-protein.svg';
-import iconCarbohydrate from '../assets/icon-carbohydrate.svg';
-import iconLipid from '../assets/icon-lipid.svg';
+import Card from '../charts/Card.jsx';
+import iconCalorie from '../../assets/icon-calorie.svg';
+import iconProtein from '../../assets/icon-protein.svg';
+import iconCarbohydrate from '../../assets/icon-carbohydrate.svg';
+import iconLipid from '../../assets/icon-lipid.svg';
 import propTypes from 'prop-types';
 
 /**

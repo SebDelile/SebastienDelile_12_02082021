@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
-import RadarChart from './RadarChart.jsx';
-import isObjectEmpty from '../utils/isObjectEmpty.js';
-import COLORS from '../utils/COLORS.js';
+import RadarChart from '../charts/RadarChart.jsx';
+import isObjectEmpty from '../../utils/isObjectEmpty.js';
+import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
 /**

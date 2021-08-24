@@ -1,14 +1,14 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import { Redirect } from 'react-router-dom';
-import Greetings from './Greetings.jsx';
-import Activity from './Activity';
-import AverageSessions from './AverageSessions';
-import Performance from './Performance';
-import AverageScore from './AverageScore';
-import KeyData from './KeyData';
-import getData from '../services/getData.js';
-import isObjectEmpty from '../utils/isObjectEmpty.js';
+import Greetings from '../dashboard_sections/Greetings.jsx';
+import Activity from '../dashboard_sections/Activity';
+import AverageSessions from '../dashboard_sections/AverageSessions';
+import Performance from '../dashboard_sections/Performance';
+import AverageScore from '../dashboard_sections/AverageScore';
+import KeyData from '../dashboard_sections/KeyData';
+import getData from '../../services/getData.js';
+import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import propTypes from 'prop-types';
 
 /**

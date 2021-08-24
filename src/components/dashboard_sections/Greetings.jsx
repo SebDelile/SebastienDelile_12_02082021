@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import styled from 'styled-components';
-import COLORS from '../utils/COLORS.js';
+import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
 /**

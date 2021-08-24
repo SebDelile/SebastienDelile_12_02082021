@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import styled from 'styled-components';
-import iconYoga from '../assets/icon-yoga.svg';
-import iconBiking from '../assets/icon-biking.svg';
-import iconSwimming from '../assets/icon-swimming.svg';
-import iconBodybuilding from '../assets/icon-bodybuilding.svg';
-import COLORS from '../utils/COLORS.js';
+import iconYoga from '../../assets/icon-yoga.svg';
+import iconBiking from '../../assets/icon-biking.svg';
+import iconSwimming from '../../assets/icon-swimming.svg';
+import iconBodybuilding from '../../assets/icon-bodybuilding.svg';
+import COLORS from '../../utils/COLORS.js';
 
 /**
  * Render a NavLeft component.

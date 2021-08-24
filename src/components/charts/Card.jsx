@@ -1,11 +1,11 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import * as d3 from 'd3';
-import giveOpacityToColorHex from '../utils/giveOpacityToColorHex.js';
-import putThousandSeparator from '../utils/putThousandSeparator.js';
-import COLORS from '../utils/COLORS.js';
-import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
-import animateDigits from '../utils/animateDigits.js';
+import giveOpacityToColorHex from '../../utils/giveOpacityToColorHex.js';
+import putThousandSeparator from '../../utils/putThousandSeparator.js';
+import COLORS from '../../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
+import animateDigits from '../../utils/animateDigits.js';
 import propTypes from 'prop-types';
 
 /**

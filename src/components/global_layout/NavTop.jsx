@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import logo from '../assets/logo.svg';
-import COLORS from '../utils/COLORS.js';
+import logo from '../../assets/logo.svg';
+import COLORS from '../../utils/COLORS.js';
 
 /**
  * Render a NavTop component.

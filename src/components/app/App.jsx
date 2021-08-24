@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import Dashboard from './Dashboard.jsx';
-import NavTop from './NavTop.jsx';
-import NavLeft from './NavLeft.jsx';
-import ErrorPage from './ErrorPage.jsx';
+import Dashboard from '../pages/Dashboard.jsx';
+import NavTop from '../global_layout/NavTop.jsx';
+import NavLeft from '../global_layout/NavLeft.jsx';
+import ErrorPage from '../pages/ErrorPage.jsx';
 
 /**
  * The main component. It contains the router

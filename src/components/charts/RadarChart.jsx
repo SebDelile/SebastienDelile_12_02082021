@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import giveOpacityToColorHex from '../utils/giveOpacityToColorHex.js';
-import COLORS from '../utils/COLORS.js';
-import LOADING_TRANSITION_SETTINGS from '../utils/LOADING_TRANSITION_SETTINGS.js';
-import getxyFromPolar from '../utils/getxyFromPolar.js';
+import giveOpacityToColorHex from '../../utils/giveOpacityToColorHex.js';
+import COLORS from '../../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
+import getxyFromPolar from '../../utils/getxyFromPolar.js';
+import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
 import propTypes from 'prop-types';
-import ComponentWithCurry from '../utils/ComponentWithCurry.js';
 
 /**
  * Render a radarchart (spiderchart). Exported with curry to ensure the props from CharContainer are well checked

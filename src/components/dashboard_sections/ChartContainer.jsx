@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import debounce from '../utils/debounce';
+import debounce from '../../utils/debounce';
 
 /**
  * Render a chartContainer. This is a template to provide method to the chart containers components in order to pass width and height as props

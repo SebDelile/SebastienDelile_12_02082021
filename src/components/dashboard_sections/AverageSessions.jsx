@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
-import LineChart from './LineChart.jsx';
-import isObjectEmpty from '../utils/isObjectEmpty.js';
-import COLORS from '../utils/COLORS.js';
+import LineChart from '../charts/LineChart.jsx';
+import isObjectEmpty from '../../utils/isObjectEmpty.js';
+import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
 /**
