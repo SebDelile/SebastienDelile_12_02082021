@@ -28,6 +28,9 @@ class App extends Component {
               path="/user/:userId"
               render={(routeProps) => <Dashboard {...routeProps} />}
             />
+            <Route path="/errorpage">
+              <ErrorPage />
+            </Route>
             <Route>
               <ErrorPage />
             </Route>

@@ -71,7 +71,7 @@ class Dashboard extends Component {
       this.state.userAverageSessions instanceof Error ||
       this.state.userPerformance instanceof Error;
     if (isDataNotReady) return null;
-    else if (isDataError) return <Redirect to="/" />;
+    else if (isDataError) return <Redirect to="/errorpage" />;
     else
       return (
         <Container>
