@@ -5,7 +5,7 @@ import Greetings from '../dashboard_sections/Greetings.jsx';
 import Activity from '../dashboard_sections/Activity';
 import AverageSessions from '../dashboard_sections/AverageSessions';
 import Performance from '../dashboard_sections/Performance';
-import AverageScore from '../dashboard_sections/AverageScore';
+import TodayScore from '../dashboard_sections/TodayScore';
 import KeyData from '../dashboard_sections/KeyData';
 import getData from '../../services/getData.js';
 import isObjectEmpty from '../../utils/isObjectEmpty.js';
@@ -18,19 +18,23 @@ import propTypes from 'prop-types';
  * @param {object} state - the state of the component
  * @param {object} props
  * @param {string} props.match.params.id - contains the id of the user passed as parameter to the url
- * @param {object} state.userMainData - the main data of the user fetched from the API
- * @param {object} state.userActivity - the activity data of the user fetched from the API
- * @param {object} state.userAverageSessions - the average sessions data of the user fetched from the API
- * @param {object} state.userPerformance - the performance data of the user fetched from the API
+ * @param {object} state.infos - the infos of the user fetched from the API
+ * @param {object} state.activity - the activity data of the user fetched from the API
+ * @param {object} state.averageSessions - the average sessions data of the user fetched from the API
+ * @param {object} state.performance - the performance data of the user fetched from the API
+ * @param {object} state.todayScore - the today's score value of the user fetched from the API
+ * @param {object} state.keyData - the key data of the user fetched from the API
  */
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userMainData: {},
-      userActivity: {},
-      userAverageSessions: {},
-      userPerformance: {},
+      infos: {},
+      activity: {},
+      averageSessions: {},
+      performance: {},
+      todayScore: {},
+      keyData: {},
     };
   }
 
@@ -39,17 +43,17 @@ class Dashboard extends Component {
    */
   async componentDidMount() {
     const userId = this.props.match.params.userId;
-    const userMainData = await getData(`/user/${userId}`);
-    const userActivity = await getData(`/user/${userId}/activity`);
-    const userAverageSessions = await getData(
-      `/user/${userId}/average-sessions`
-    );
-    const userPerformance = await getData(`/user/${userId}/performance`);
+    const mainData = await getData(`/user/${userId}`);
+    const activity = await getData(`/user/${userId}/activity`);
+    const averageSessions = await getData(`/user/${userId}/average-sessions`);
+    const performance = await getData(`/user/${userId}/performance`);
     this.setState({
-      userMainData: userMainData,
-      userActivity: userActivity,
-      userAverageSessions: userAverageSessions,
-      userPerformance: userPerformance,
+      infos: mainData.userInfos,
+      activity: activity,
+      averageSessions: averageSessions,
+      performance: performance,
+      todayScore: { value: mainData.todayScore },
+      keyData: mainData.keyData,
     });
   }
 
@@ -58,31 +62,19 @@ class Dashboard extends Component {
    * @returns {Reactnode} jsx to be injected in the html
    */
   render() {
-    const isDataNotReady =
-      isObjectEmpty(this.state.userMainData) ||
-      isObjectEmpty(this.state.userActivity) ||
-      isObjectEmpty(this.state.userAverageSessions) ||
-      isObjectEmpty(this.state.userPerformance);
-    const isDataError =
-      this.state.userMainData instanceof Error ||
-      this.state.userActivity instanceof Error ||
-      this.state.userAverageSessions instanceof Error ||
-      this.state.userPerformance instanceof Error;
+    const isDataNotReady = isObjectEmpty(this.state.infos);
+    const isDataError = this.state.infos instanceof Error;
     if (isDataNotReady) return <LoadingSpinner />;
     else if (isDataError) return <Redirect to="/errorpage" />;
     else
       return (
         <Container>
-          <Greetings data={this.state.userMainData.userInfos} />
-          <Activity data={this.state.userActivity} />
-          <AverageSessions data={this.state.userAverageSessions} />
-          <Performance data={this.state.userPerformance} />
-          <AverageScore
-            data={{
-              value: this.state.userMainData.todayScore,
-            }}
-          />
-          <KeyData data={this.state.userMainData.keyData} />
+          <Greetings data={this.state.infos} />
+          <Activity data={this.state.activity} />
+          <AverageSessions data={this.state.averageSessions} />
+          <Performance data={this.state.performance} />
+          <TodayScore data={this.state.todayScore} />
+          <KeyData data={this.state.keyData} />
         </Container>
       );
   }

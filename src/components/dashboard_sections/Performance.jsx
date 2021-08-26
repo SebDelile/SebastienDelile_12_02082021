@@ -2,6 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import RadarChart from '../charts/RadarChart.jsx';
+import processData from '../../services/processData.js';
 import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
@@ -17,10 +18,7 @@ import propTypes from 'prop-types';
 class Performance extends Component {
   constructor(props) {
     super(props);
-    this.dataset = this.props.data.data.map((item) => ({
-      key: item.kind,
-      value: item.value,
-    }));
+    this.dataset = processData(this.props.data, 'performanceToRadarChart');
   }
 
   /**

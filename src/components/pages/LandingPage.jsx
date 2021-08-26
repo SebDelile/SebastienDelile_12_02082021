@@ -33,10 +33,14 @@ class LandingPage extends Component {
         <Message>Ou en utilisant les données mockées :</Message>
         <LinkList>
           <li>
-            <StyledLink to="/user/12mock">Utilisateur #12</StyledLink>
+            <StyledLink to="/user/12-data-from-mock">
+              Utilisateur #12
+            </StyledLink>
           </li>
           <li>
-            <StyledLink to="/user/18mock">Utilisateur #18</StyledLink>
+            <StyledLink to="/user/18-data-from-mock">
+              Utilisateur #18
+            </StyledLink>
           </li>
         </LinkList>
       </Container>

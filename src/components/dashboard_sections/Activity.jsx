@@ -2,12 +2,13 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import BarChart from '../charts/BarChart.jsx';
+import processData from '../../services/processData.js';
 import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
 /**
- * Render the Activity part of the Dashboard
+ * Render the Activity part of the Dashboard with a bar chart
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
@@ -17,10 +18,7 @@ import propTypes from 'prop-types';
 class Activity extends Component {
   constructor(props) {
     super(props);
-    this.dataset = this.props.data.sessions.map((session) => ({
-      x: new Date(session.day).getDate(),
-      y: [session.kilogram, session.calories],
-    }));
+    this.dataset = processData(this.props.data, 'activityToBarChart');
   }
 
   /**

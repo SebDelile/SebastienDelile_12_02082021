@@ -2,12 +2,13 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import LineChart from '../charts/LineChart.jsx';
+import processData from '../../services/processData.js';
 import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
 /**
- * Render the AverageSession part of the Dashboard
+ * Render the AverageSession part of the Dashboard with a line chart
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
@@ -17,12 +18,7 @@ import propTypes from 'prop-types';
 class AverageSessions extends Component {
   constructor(props) {
     super(props);
-    this.dataset = this.props.data.sessions.map((session) => {
-      return {
-        x: session.day,
-        y: session.sessionLength,
-      };
-    });
+    this.dataset = processData(this.props.data, 'averageSessionsToLineChart');
   }
 
   /**
