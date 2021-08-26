@@ -18,15 +18,25 @@ class LandingPage extends Component {
       <Container>
         <Title>Bienvenue !</Title>
         <Message>
-          Utilisez l'un des liens suivants pour afficher le dashboard d'un des
-          utilisateurs :
+          Utilisez les liens suivants pour afficher le dashboard d'un
+          utilisateur.
         </Message>
+        <Message>En récupérant les données via l'API :</Message>
         <LinkList>
           <li>
             <StyledLink to="/user/12">Utilisateur #12</StyledLink>
           </li>
           <li>
             <StyledLink to="/user/18">Utilisateur #18</StyledLink>
+          </li>
+        </LinkList>
+        <Message>Ou en utilisant les données mockées :</Message>
+        <LinkList>
+          <li>
+            <StyledLink to="/user/12mock">Utilisateur #12</StyledLink>
+          </li>
+          <li>
+            <StyledLink to="/user/18mock">Utilisateur #18</StyledLink>
           </li>
         </LinkList>
       </Container>
@@ -61,7 +71,7 @@ const Title = styled.h1`
  */
 const Message = styled.p`
   font-size: 1.5rem;
-  padding: 2rem 0;
+  padding: 3rem 0 1rem 0;
 `;
 
 /**
@@ -69,11 +79,14 @@ const Message = styled.p`
  * @memberof LandingPage
  */
 const LinkList = styled.ul`
-  list-style: '➥';
-  padding-left: 4.5rem;
+  list-style: '➥ ' inside;
+  display: flex;
+  flex-direction: rows;
+  justify-content: flex-start;
+  align-items: center;
 
   li {
-    padding: 1rem 0 1rem 0.5rem;
+    padding: 1rem 0 1rem 4rem;
     font-size: 1.5rem;
   }
 `;

@@ -38,18 +38,13 @@ class Dashboard extends Component {
    * Launch the fetches to get the data from API or from the mock (dépending on isFromAPI boolean), then set the obtained object to the state
    */
   async componentDidMount() {
-    const isFromAPI = true;
     const userId = this.props.match.params.userId;
-    const userMainData = await getData(`/user/${userId}`, isFromAPI);
-    const userActivity = await getData(`/user/${userId}/activity`, isFromAPI);
+    const userMainData = await getData(`/user/${userId}`);
+    const userActivity = await getData(`/user/${userId}/activity`);
     const userAverageSessions = await getData(
-      `/user/${userId}/average-sessions`,
-      isFromAPI
+      `/user/${userId}/average-sessions`
     );
-    const userPerformance = await getData(
-      `/user/${userId}/performance`,
-      isFromAPI
-    );
+    const userPerformance = await getData(`/user/${userId}/performance`);
     this.setState({
       userMainData: userMainData,
       userActivity: userActivity,

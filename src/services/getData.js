@@ -2,28 +2,18 @@ import { MOCKED_DATA } from '../data/MOCKED_DATA.js';
 import axios from 'axios';
 
 /**
- * make the call to API or MOCKED_DATA (dependiing on bool) and return the required data as an object
+ * make the call to API or MOCKED_DATA (depending on route) and return the required data as an object
  * @memberof services
  * @param {string} route - the route to get the required data
- * @param {boolean} isFromAPI - true if the call has to be made to the API, false to get the mocked data
  * @returns {object} the required data, corresponding to the specified user in the route. Or an error if it fails
  */
-const getData = async (route, isFromAPI = true) => {
-  if (isFromAPI) {
-    //do a fetch to the API
-    const BASE_URL = 'http://localhost:3001';
-    try {
-      const rawResponse = await axios.get(BASE_URL + route);
-      return await rawResponse.data.data;
-    } catch (error) {
-      return error;
-    }
-  } else {
+const getData = async (route) => {
+  const [userId, category] = route.replace('/user/', '').split('/');
+  if (userId.includes('mock')) {
     //use the mocked data
-    const parsedRoute = route.replace('/user/', '').split('/');
-    const userId = parseInt(parsedRoute[0]);
+    const parsedUserId = parseInt(userId.replace('mock', ''));
     let module = '';
-    switch (parsedRoute[1]) {
+    switch (category) {
       case undefined:
         module = 'userMainData';
         break;
@@ -39,10 +29,19 @@ const getData = async (route, isFromAPI = true) => {
       default:
         module = 'error';
     }
-    const data = MOCKED_DATA[module].find(
-      (element) => element.userId === userId
-    );
+    const data = MOCKED_DATA[module]
+      ? MOCKED_DATA[module].find((element) => element.userId === parsedUserId)
+      : null;
     return data ? data : new Error('Donnée introuvable');
+  } else {
+    //do a fetch to the API
+    const BASE_URL = 'http://localhost:3001';
+    try {
+      const rawResponse = await axios.get(BASE_URL + route);
+      return await rawResponse.data.data;
+    } catch (error) {
+      return error;
+    }
   }
 };
 
