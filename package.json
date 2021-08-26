@@ -20,7 +20,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "jsdoc": "./node_modules/.bin/jsdoc src -r -d docs/javascript --readme docs/javascript/homepage.md"
+    "jsdoc": "./node_modules/.bin/jsdoc src -r -d docs/javascript --readme docs/javascript/homepage.md",
+    "containers-start": "docker-compose -f docker-compose.dev.yml up -d",
+    "containers-end": "docker-compose -f docker-compose.dev.yml down"
   },
   "eslintConfig": {
     "extends": [
