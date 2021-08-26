@@ -67,7 +67,7 @@ class Dashboard extends Component {
       isObjectEmpty(this.state.userPerformance);
     const isDataError =
       this.state.userMainData instanceof Error ||
-      this.state.userActivitya instanceof Error ||
+      this.state.userActivity instanceof Error ||
       this.state.userAverageSessions instanceof Error ||
       this.state.userPerformance instanceof Error;
     if (isDataNotReady) return <LoadingSpinner />;
@@ -81,9 +81,7 @@ class Dashboard extends Component {
           <Performance data={this.state.userPerformance} />
           <AverageScore
             data={{
-              value: this.state.userMainData.hasOwnProperty('todayScore')
-                ? this.state.userMainData.todayScore
-                : this.state.userMainData.score,
+              value: this.state.userMainData.todayScore,
             }}
           />
           <KeyData data={this.state.userMainData.keyData} />

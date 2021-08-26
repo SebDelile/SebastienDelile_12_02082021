@@ -31,7 +31,7 @@ const getData = (route, isFromAPI = true) => {
         module = 'error';
     }
     const data = MOCKED_DATA[module].find(
-      (element) => element.userId === userId || element.id === userId
+      (element) => element.userId === userId
     );
     return data ? data : new Error('Donnée introuvable');
   }
