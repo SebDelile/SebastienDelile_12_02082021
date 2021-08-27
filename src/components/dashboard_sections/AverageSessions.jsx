@@ -2,7 +2,7 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import LineChart from '../charts/LineChart.jsx';
-import LoadingError from '../global_layout/LoadingError.jsx';
+import LoadingError from '../global_layouts/LoadingError.jsx';
 import processData from '../../services/processData.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';

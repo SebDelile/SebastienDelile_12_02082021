@@ -6,7 +6,7 @@ import COLORS from '../../utils/COLORS.js';
 
 /**
  * Render a NavTop component.
- * @memberof general_layout
+ * @memberof general_layouts
  * @extends Component
  * @hideconstructor
  */

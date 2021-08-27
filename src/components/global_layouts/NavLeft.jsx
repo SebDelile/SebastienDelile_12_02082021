@@ -8,7 +8,7 @@ import COLORS from '../../utils/COLORS.js';
 
 /**
  * Render a NavLeft component.
- * @memberof general_layout
+ * @memberof general_layouts
  * @extends Component
  * @hideconstructor
  */

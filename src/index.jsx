@@ -120,8 +120,8 @@ reportWebVitals();
  * @namespace pages */
 
 /**
- * group all general layout
- * @namespace general_layout */
+ * group all general layouts
+ * @namespace general_layouts */
 
 /**
  * group all dashboard sections

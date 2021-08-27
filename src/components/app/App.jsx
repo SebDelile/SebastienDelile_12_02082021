@@ -2,8 +2,8 @@ import { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import Dashboard from '../pages/Dashboard.jsx';
-import NavTop from '../global_layout/NavTop.jsx';
-import NavLeft from '../global_layout/NavLeft.jsx';
+import NavTop from '../global_layouts/NavTop.jsx';
+import NavLeft from '../global_layouts/NavLeft.jsx';
 import LandingPage from '../pages/LandingPage.jsx';
 import ErrorPage from '../pages/ErrorPage.jsx';
 

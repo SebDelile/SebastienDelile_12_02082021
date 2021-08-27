@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 
 /**
  * Render a LoadingError component (a cross to display in the chart container)
- * @memberof general_layout
+ * @memberof general_layouts
  * @extends Component
  * @hideconstructor
  * @param {string} color - the color of the cross
