@@ -5,6 +5,6 @@
  * @param {ReactElement} Component - the component to pass
  * @returns {ReactElement} the same component with the props inclunding those given by the higher-order component
  */
-const ComponentWithCurry = (Component) => (props) => <Component {...props} />;
+const componentWithCurry = (Component) => (props) => <Component {...props} />;
 
-export default ComponentWithCurry;
+export default componentWithCurry;
