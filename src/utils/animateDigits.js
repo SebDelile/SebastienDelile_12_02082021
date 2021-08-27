@@ -7,7 +7,7 @@ import * as d3 from 'd3';
  * @param {number} startValue - the value from where to start the animation
  * @param {number} endValue  - the value where the animation ends
  * @param {number} step - the step to round the values for each increment
- * @param {object} LOADING_TRANSITION_SETTINGS - the settings of the transition, must contain a key duration and a key ease
+ * @param {object} transitionSettings - the settings of the transition, must contain a key duration and a key ease
  * @param {function} formatResult - a function to give the displayed value a certain format, if not specified, no format is given (default a=>a)
  */
 const animateDigits = (
@@ -15,14 +15,14 @@ const animateDigits = (
   startValue,
   endValue,
   step,
-  LOADING_TRANSITION_SETTINGS,
+  transitionSettings,
   formatResult = (a) => a
 ) => {
   target
     .text(startValue)
     .transition()
-    .duration(LOADING_TRANSITION_SETTINGS.duration)
-    .ease(LOADING_TRANSITION_SETTINGS.ease)
+    .duration(transitionSettings.duration)
+    .ease(transitionSettings.ease)
     .tween('', () => {
       let i = d3.interpolateRound(target.text(), endValue);
       return (t) => {
