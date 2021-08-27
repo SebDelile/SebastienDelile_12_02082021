@@ -59,7 +59,7 @@ class KeyData extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (

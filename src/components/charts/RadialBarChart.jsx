@@ -5,7 +5,7 @@ import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS
 import appendMultilineSvgText from '../../utils/appendMultilineSvgText.js';
 import getxyFromPolar from '../../utils/getxyFromPolar.js';
 import animateDigits from '../../utils/animateDigits.js';
-import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
+import componentWithCurry from '../../utils/componentWithCurry.js';
 import propTypes from 'prop-types';
 
 /**
@@ -225,7 +225,7 @@ class RadialBarChart extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (
@@ -249,4 +249,4 @@ RadialBarChart.propTypes = {
   containerHeight: propTypes.number.isRequired,
 };
 
-export default ComponentWithCurry(RadialBarChart);
+export default componentWithCurry(RadialBarChart);

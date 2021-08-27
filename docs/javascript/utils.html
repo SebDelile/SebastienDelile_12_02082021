@@ -239,7 +239,7 @@
     
 
     
-    <h4 class="name" id=".animateDigits"><span class="type-signature">(static) </span>animateDigits<span class="signature">(target, startValue, endValue, step, LOADING_TRANSITION_SETTINGS, formatResult)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".animateDigits"><span class="type-signature">(static) </span>animateDigits<span class="signature">(target, startValue, endValue, step, transitionSettings, formatResult)</span><span class="type-signature"></span></h4>
     
 
     
@@ -375,7 +375,7 @@
 
         <tr>
             
-                <td class="name"><code>LOADING_TRANSITION_SETTINGS</code></td>
+                <td class="name"><code>transitionSettings</code></td>
             
 
             <td class="type">
@@ -674,7 +674,7 @@
     
 
     
-    <h4 class="name" id=".ComponentWithCurry"><span class="type-signature">(static) </span>ComponentWithCurry<span class="signature">(Component)</span><span class="type-signature"> &rarr; {ReactElement}</span></h4>
+    <h4 class="name" id=".componentWithCurry"><span class="type-signature">(static) </span>componentWithCurry<span class="signature">(Component)</span><span class="type-signature"> &rarr; {ReactElement}</span></h4>
     
 
     
@@ -775,7 +775,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_ComponentWithCurry.js.html">utils/ComponentWithCurry.js</a>, <a href="utils_ComponentWithCurry.js.html#line8">line 8</a>
+        <a href="utils_componentWithCurry.js.html">utils/componentWithCurry.js</a>, <a href="utils_componentWithCurry.js.html#line8">line 8</a>
     </li></ul></dd>
     
 
@@ -1561,165 +1561,6 @@
     
 
     
-    <h4 class="name" id=".isObjectEmpty"><span class="type-signature">(static) </span>isObjectEmpty<span class="signature">(object)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    test if the object is empty or not
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>object</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the object to test</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_isObjectEmpty.js.html">utils/isObjectEmpty.js</a>, <a href="utils_isObjectEmpty.js.html#line7">line 7</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    - true is empty, false if there is at least one key
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
     <h4 class="name" id=".putThousandSeparator"><span class="type-signature">(static) </span>putThousandSeparator<span class="signature">(number)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
 
@@ -2094,13 +1935,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:22 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

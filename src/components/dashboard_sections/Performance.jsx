@@ -14,7 +14,7 @@ import propTypes from 'prop-types';
  * @param {object} props
  * @param {object} props.data - the raw data to make the radarchart
  * @param {boolean} isError - true if this.props.data is an error object, false otherwise
- * @param {array} dataset - the processed data to make the radarchart or null if data loading has failed
+ * @param {array|null} dataset - the processed data to make the radarchart or null if data loading has failed
  */
 class Performance extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class Performance extends Component {
 
   /**
    * Render the component. display an error message instead of the chart if isError is true
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (

@@ -7,12 +7,12 @@ import propTypes from 'prop-types';
  * @memberof general_layouts
  * @extends Component
  * @hideconstructor
- * @param {string} color - the color of the cross
+ * @param {string} props.color - the color of the cross
  */
 class LoadingError extends Component {
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (

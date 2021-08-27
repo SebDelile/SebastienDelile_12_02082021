@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utils/setNiceDomain.js</title>
+    <title>JSDoc: Source: components/dashboard_sections/TodayScore.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utils/setNiceDomain.js</h1>
+    <h1 class="page-title">Source: components/dashboard_sections/TodayScore.jsx</h1>
 
     
 
@@ -26,54 +26,75 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import * as d3 from 'd3';
-import fixJSfloatError from './fixJSfloatError';
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import styled from 'styled-components';
+import ChartContainer from './ChartContainer.jsx';
+import RadialBarChart from '../charts/RadialBarChart.jsx';
+import LoadingError from '../global_layouts/LoadingError.jsx';
+import processData from '../../services/processData.js';
+import COLORS from '../../utils/COLORS.js';
+import propTypes from 'prop-types';
 
 /**
- * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
- * @memberof utils
- * @param {boolean} isFromZero - true if the serie has to be displayed from 0, false otherwise
- * @param {array} data - the data array used to make the domain
- * @param {number} stepsNumber - the required number of steps (one could be automatically added to display more nicely the minimum data)
- * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain, the step value and the ticks values
+ * Render the TodayScore part of the Dashboard with a radial bar chart
+ * @memberof dashboard_sections
+ * @extends Component
+ * @param {object} props
+ * @param {object} props.data - the data to make the radialbarchart, no processing needed, only check if value is >1
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
+ * @param {array} dataset - the processed data to make the RadialBarchart or null if data loading has failed
  */
-const setNiceDomain = (isFromZero, data, stepsNumber) => {
-  const max = d3.max(data);
-  const min = isFromZero ? 0 : d3.min(data);
+class TodayScore extends Component {
+  constructor(props) {
+    super(props);
+    this.isError = this.props.data instanceof Error;
+    this.dataset = this.isError
+      ? null
+      : processData(this.props.data, 'todayScoreToRadiaBarChart');
+  }
 
-  const delta = max - min;
-  const step = delta / stepsNumber;
+  /**
+   * Render the component. display an error message instead of the chart if isError is true
+   * @returns {ReactElement} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;StyledChartContainer>
+        {this.isError ? (
+          &lt;LoadingError color={COLORS.veryDarkGrey} />
+        ) : (
+          &lt;RadialBarChart
+            title="Score"
+            value={this.dataset}
+            description="de votre objectif"
+          />
+        )}
+      &lt;/StyledChartContainer>
+    );
+  }
+}
 
-  const rounder = 10 ** Math.floor(Math.log10(step));
-  const stepRounded = fixJSfloatError(Math.ceil(step / rounder) * rounder);
-
-  const isAdditionnalStep =
-    min - Math.floor(min / stepRounded) * stepRounded &lt;= stepRounded / 3
-      ? true
-      : false;
-
-  const minRounded = fixJSfloatError(
-    isFromZero
-      ? 0
-      : (Math.floor(min / stepRounded) - isAdditionnalStep) * stepRounded
-  );
-  const maxRounded = fixJSfloatError(
-    Math.ceil(max / stepRounded) * stepRounded
-  );
-
-  const ticksValues = new Array(stepsNumber + 1 + isAdditionnalStep)
-    .fill(null)
-    .map((value, index) => fixJSfloatError(minRounded + index * stepRounded));
-
-  return {
-    minRounded: minRounded,
-    maxRounded: maxRounded,
-    stepRounded: stepRounded,
-    ticksValues: ticksValues,
-  };
+/**
+ * The propTypes for the TodayScore component
+ * @memberof TodayScore
+ */
+TodayScore.propTypes = {
+  data: propTypes.oneOfType([propTypes.number, propTypes.instanceOf(Error)])
+    .isRequired,
 };
 
-export default setNiceDomain;
+/**
+ * The style for the AvergareScore component
+ * @memberof TodayScore
+ */
+const StyledChartContainer = styled(ChartContainer)`
+  grid-area: average-score;
+  height: 16.5rem;
+  background-color: ${COLORS.veryLightGrey};
+  border-radius: 0.375rem;
+`;
+
+export default TodayScore;
 </code></pre>
         </article>
     </section>

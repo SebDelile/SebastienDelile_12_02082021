@@ -1,8 +1,40 @@
-# Getting Started with Create React App
+# SportSee prototype
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+SportSee is a web application offering its user to monitor sports and diets metrics in an analytic Dahsboard.
 
-## Available Scripts
+This prototype includes a landing page containing links to some dashboard pages generated from API data or mocked data.
+
+![app preview - dashboard](/docs/app-preview-dashboard.png)
+
+## How to begin with the project
+
+To install the project on your laptop, fork or clone the repo and launch the command `npm ci` to install all dependencies. Then you can start working on the project !
+
+## Documentation
+
+A class diagram of the app can be found at [/docs/SportSee.drawio.png](/docs/SportSee.drawio.png)
+
+The javascript documentation can be found at [/docs/javascript/index.html](/docs/javascript/index.html)
+
+## Dependencies
+
+The project is a single page application powered by React JS. it uses :
+
+- **create-react-app** for the react providing (includes Webpack, Babel and Eslint)
+- **react-router-dom** for the app routing
+- **styled-components** to style the components performing CSS-in-JS
+- **axios** to perfom the API alls
+- **d3** to build the charts
+- **prettier** to format the files (add any missing semi-column and 2 spaces tab-width)
+- **jsdoc** to document the javascript
+- **prop-types** to set the proptypes of the components
+- **stylelint** to lint the style and avoid errors and inconsistencies
+- **stylelint-config-standard** to configure stylelint
+- **draw-io** to edit the class diagramm, a [vs-code extension](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio)
+
+Please consider to have Docker to run locally the containers of frontend and API simultaneously (see Docker-compose scripts section)
+
+## Available scripts
 
 In the project directory, you can run:
 
@@ -19,6 +51,8 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+Please not there is no yet any implemented test.
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -28,6 +62,10 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run jsdoc`
+
+Update the javascript documentation
 
 ### `npm run eject`
 
@@ -39,43 +77,15 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
 ## Docker-compose scripts
+
+This needs you to have Docker installed on your device ([see documentation](https://docs.docker.com/))
 
 ### `npm run containers-start`
 
 run an image for the frontend on port 3000 (with hot reload) and an image of the backend api on port 3001.
 
-It uses docker-compose to build both images and run then (deamon mode)
+It uses docker-compose to build both images and run them (deamon mode)
 
 ### `npm run containers-end`
 

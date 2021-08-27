@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="dashboard_sections.html">dashboard_sections</a>.</span>KeyData<span class="signature">(props, names, icons, values, colors)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="dashboard_sections.html">dashboard_sections</a>.</span>KeyData<span class="signature">(props, isError, names, icons, values, colors)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Render a KeyData component.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="KeyData"><span class="type-signature"></span>new KeyData<span class="signature">(props, names, icons, values, colors)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="KeyData"><span class="type-signature"></span>new KeyData<span class="signature">(props, isError, names, icons, values, colors)</span><span class="type-signature"></span></h4>
     
 
     
@@ -144,7 +144,7 @@
 
             
 
-            <td class="description last">the raw data to display in the card components</td>
+            <td class="description last">the raw data to display in the card components or an error if data loading has failed</td>
         </tr>
 
     
@@ -152,6 +152,29 @@
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isError</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">true if this.props.data is an error object, false otherwise</td>
         </tr>
 
     
@@ -220,7 +243,7 @@
 
             
 
-            <td class="description last">the values to display in the cards (from props)</td>
+            <td class="description last">the values to display in the cards (from props) or '-' if error</td>
         </tr>
 
     
@@ -284,7 +307,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_dashboard_sections_KeyData.jsx.html">components/dashboard_sections/KeyData.jsx</a>, <a href="components_dashboard_sections_KeyData.jsx.html#line21">line 21</a>
+        <a href="components_dashboard_sections_KeyData.jsx.html">components/dashboard_sections/KeyData.jsx</a>, <a href="components_dashboard_sections_KeyData.jsx.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -351,7 +374,7 @@
     
 
     
-    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">()</span><span class="type-signature"> &rarr; {Reactnode}</span></h4>
+    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">()</span><span class="type-signature"> &rarr; {ReactElement}</span></h4>
     
 
     
@@ -403,7 +426,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="components_dashboard_sections_KeyData.jsx.html">components/dashboard_sections/KeyData.jsx</a>, <a href="components_dashboard_sections_KeyData.jsx.html#line55">line 55</a>
+        <a href="components_dashboard_sections_KeyData.jsx.html">components/dashboard_sections/KeyData.jsx</a>, <a href="components_dashboard_sections_KeyData.jsx.html#line64">line 64</a>
     </li></ul></dd>
     
 
@@ -443,7 +466,7 @@
     </dt>
     <dd>
         
-<span class="param-type">Reactnode</span>
+<span class="param-type">ReactElement</span>
 
 
     </dd>
@@ -471,13 +494,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:21 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

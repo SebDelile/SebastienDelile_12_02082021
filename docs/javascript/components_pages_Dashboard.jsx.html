@@ -33,10 +33,9 @@ import Greetings from '../dashboard_sections/Greetings.jsx';
 import Activity from '../dashboard_sections/Activity';
 import AverageSessions from '../dashboard_sections/AverageSessions';
 import Performance from '../dashboard_sections/Performance';
-import AverageScore from '../dashboard_sections/AverageScore';
+import TodayScore from '../dashboard_sections/TodayScore';
 import KeyData from '../dashboard_sections/KeyData';
 import getData from '../../services/getData.js';
-import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import propTypes from 'prop-types';
 
 /**
@@ -46,77 +45,77 @@ import propTypes from 'prop-types';
  * @param {object} state - the state of the component
  * @param {object} props
  * @param {string} props.match.params.id - contains the id of the user passed as parameter to the url
- * @param {object} state.userMainData - the main data of the user fetched from the API
- * @param {object} state.userActivity - the activity data of the user fetched from the API
- * @param {object} state.userAverageSessions - the average sessions data of the user fetched from the API
- * @param {object} state.userPerformance - the performance data of the user fetched from the API
+ * @param {object} state.greetings - the infos of the user fetched from the API
+ * @param {object} state.activity - the activity data of the user fetched from the API
+ * @param {object} state.averageSessions - the average sessions data of the user fetched from the API
+ * @param {object} state.performance - the performance data of the user fetched from the API
+ * @param {object} state.todayScore - the today's score value of the user fetched from the API
+ * @param {object} state.keyData - the key data of the user fetched from the API
+ * @param {boolean} state.isLoading - default true, turn false when state is modified
+ * @param {boolean} state.isError - default false, turn true if all 4 fetchs have failed
  */
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userMainData: {},
-      userActivity: {},
-      userAverageSessions: {},
-      userPerformance: {},
+      greetings: {},
+      activity: {},
+      averageSessions: {},
+      performance: {},
+      todayScore: {},
+      keyData: {},
+      isLoading: true,
+      isError: false,
     };
   }
 
   /**
-   * Launch the fetches to get the data from API or from the mock (dépending on isFromAPI boolean), then set the obtained object to the state
+   * Launch the fetches to get the data from API or from the mock (depending on route), then set the obtained object to the state. turn isError to true if all 4 fetches have failed
    */
-  componentDidMount() {
-    const isFromAPI = false;
+  async componentDidMount() {
     const userId = this.props.match.params.userId;
-    const userMainData = getData(`/user/${userId}`, isFromAPI);
-    const userActivity = getData(`/user/${userId}/activity`, isFromAPI);
-    const userAverageSessions = getData(
-      `/user/${userId}/average-sessions`,
-      isFromAPI
-    );
-    const userPerformance = getData(`/user/${userId}/performance`, isFromAPI);
-    this.setState({
-      userMainData: userMainData,
-      userActivity: userActivity,
-      userAverageSessions: userAverageSessions,
-      userPerformance: userPerformance,
-    });
+    const mainData = await getData(`/user/${userId}`);
+    const activity = await getData(`/user/${userId}/activity`);
+    const averageSessions = await getData(`/user/${userId}/average-sessions`);
+    const performance = await getData(`/user/${userId}/performance`);
+    if (
+      mainData instanceof Error &amp;&amp;
+      activity instanceof Error &amp;&amp;
+      averageSessions instanceof Error &amp;&amp;
+      performance instanceof Error
+    )
+      this.setState({ isLoading: false, isError: true });
+    else
+      this.setState({
+        greetings: mainData.userInfos ?? new Error('Data not found'),
+        activity: activity,
+        averageSessions: averageSessions,
+        performance: performance,
+        todayScore: mainData.todayScore ?? new Error('Data not found'),
+        keyData: mainData.keyData ?? new Error('Data not found'),
+        isLoading: false,
+      });
   }
 
   /**
-   * Render the component. contain a condition to render only when data are available and not error
-   * @returns {Reactnode} jsx to be injected in the html
+   * Render the component. when isLoading, render a spinner, when isError redirect to errorPage, otherwise render the dashboard sections
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
-    const isDataNotReady =
-      isObjectEmpty(this.state.userMainData) &amp;&amp;
-      isObjectEmpty(this.state.userActivity) &amp;&amp;
-      isObjectEmpty(this.state.userAverageSessions) &amp;&amp;
-      isObjectEmpty(this.state.userPerformance);
-    const isDataError =
-      this.state.userMainData instanceof Error ||
-      this.state.userActivitya instanceof Error ||
-      this.state.userAverageSessions instanceof Error ||
-      this.state.userPerformance instanceof Error;
-    if (isDataNotReady) return &lt;LoadingSpinner />;
-    else if (isDataError) return &lt;Redirect to="/errorpage" />;
-    else
+    if (this.state.isLoading) return &lt;LoadingSpinner />;
+    else if (this.state.isError) return &lt;Redirect to="/errorpage" />;
+    else {
       return (
         &lt;Container>
-          &lt;Greetings data={this.state.userMainData.userInfos} />
-          &lt;Activity data={this.state.userActivity} />
-          &lt;AverageSessions data={this.state.userAverageSessions} />
-          &lt;Performance data={this.state.userPerformance} />
-          &lt;AverageScore
-            data={{
-              value: this.state.userMainData.hasOwnProperty('todayScore')
-                ? this.state.userMainData.todayScore
-                : this.state.userMainData.score,
-            }}
-          />
-          &lt;KeyData data={this.state.userMainData.keyData} />
+          &lt;Greetings data={this.state.greetings} />
+          &lt;Activity data={this.state.activity} />
+          &lt;AverageSessions data={this.state.averageSessions} />
+          &lt;Performance data={this.state.performance} />
+          &lt;TodayScore data={this.state.todayScore} />
+          &lt;KeyData data={this.state.keyData} />
         &lt;/Container>
       );
+    }
   }
 }
 
@@ -190,13 +189,13 @@ export default Dashboard;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:21 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

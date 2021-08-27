@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utils/setNiceDomain.js</title>
+    <title>JSDoc: Source: components/global_layouts/LoadingError.jsx</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utils/setNiceDomain.js</h1>
+    <h1 class="page-title">Source: components/global_layouts/LoadingError.jsx</h1>
 
     
 
@@ -26,54 +26,89 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import * as d3 from 'd3';
-import fixJSfloatError from './fixJSfloatError';
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import styled from 'styled-components';
+import propTypes from 'prop-types';
 
 /**
- * take the serie and calculate a wider domain than the .nice() d3 method. It especially avoids a data to be equal to the minimum of the domain and so the corresponding bar to be 0px height
- * @memberof utils
- * @param {boolean} isFromZero - true if the serie has to be displayed from 0, false otherwise
- * @param {array} data - the data array used to make the domain
- * @param {number} stepsNumber - the required number of steps (one could be automatically added to display more nicely the minimum data)
- * @returns {object} - object with the values for the minimum of the domain, the maximum of the domain, the step value and the ticks values
+ * Render a LoadingError component (a cross to display in the chart container)
+ * @memberof general_layouts
+ * @extends Component
+ * @hideconstructor
+ * @param {string} props.color - the color of the cross
  */
-const setNiceDomain = (isFromZero, data, stepsNumber) => {
-  const max = d3.max(data);
-  const min = isFromZero ? 0 : d3.min(data);
+class LoadingError extends Component {
+  /**
+   * Render the component.
+   * @returns {ReactElement} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;Container>
+        &lt;Title color={this.props.color}>
+          Erreur de chargement, impossible d'afficher le graphique
+        &lt;/Title>
+        &lt;Bar color={this.props.color} />
+        &lt;Bar color={this.props.color} />
+      &lt;/Container>
+    );
+  }
+}
 
-  const delta = max - min;
-  const step = delta / stepsNumber;
-
-  const rounder = 10 ** Math.floor(Math.log10(step));
-  const stepRounded = fixJSfloatError(Math.ceil(step / rounder) * rounder);
-
-  const isAdditionnalStep =
-    min - Math.floor(min / stepRounded) * stepRounded &lt;= stepRounded / 3
-      ? true
-      : false;
-
-  const minRounded = fixJSfloatError(
-    isFromZero
-      ? 0
-      : (Math.floor(min / stepRounded) - isAdditionnalStep) * stepRounded
-  );
-  const maxRounded = fixJSfloatError(
-    Math.ceil(max / stepRounded) * stepRounded
-  );
-
-  const ticksValues = new Array(stepsNumber + 1 + isAdditionnalStep)
-    .fill(null)
-    .map((value, index) => fixJSfloatError(minRounded + index * stepRounded));
-
-  return {
-    minRounded: minRounded,
-    maxRounded: maxRounded,
-    stepRounded: stepRounded,
-    ticksValues: ticksValues,
-  };
+/**
+ * The propTypes for the LoadingError component
+ * @memberof LoadingError
+ */
+LoadingError.propTypes = {
+  color: propTypes.string.isRequired,
 };
 
-export default setNiceDomain;
+/**
+ * The style for the Container part of the LoadingError component
+ * @memberof LoadingError
+ */
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  position: relative;
+`;
+
+/**
+ * The style for the Title part of the LoadingError component
+ * @memberof LoadingError
+ */
+const Title = styled.h3`
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+  color: ${(props) => props.color};
+`;
+
+/**
+ * The style for the Bar part of the LoadingError component
+ * @memberof LoadingError
+ */
+const Bar = styled.div`
+  position: absolute;
+  height: 20px;
+  width: 20%;
+  min-width: 75px;
+  max-width: 150px;
+  border-radius: 5px;
+  top: 50%;
+  left: 50%;
+  background: ${(props) => props.color};
+
+  &amp;:first-of-type {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  &amp;:last-of-type {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+`;
+
+export default LoadingError;
 </code></pre>
         </article>
     </section>

@@ -4,7 +4,7 @@ import COLORS from '../../utils/COLORS.js';
 import setNiceDomain from '../../utils/setNiceDomain.js';
 import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
 import propTypes from 'prop-types';
-import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
+import componentWithCurry from '../../utils/componentWithCurry.js';
 
 /**
  * Render a barchart. Exported with curry to ensure the props from CharContainer are well checked
@@ -466,7 +466,7 @@ class BarChart extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (
@@ -507,4 +507,4 @@ BarChart.propTypes = {
   containerHeight: propTypes.number.isRequired,
 };
 
-export default ComponentWithCurry(BarChart);
+export default componentWithCurry(BarChart);

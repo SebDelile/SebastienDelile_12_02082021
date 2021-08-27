@@ -27,7 +27,7 @@ class TodayScore extends Component {
 
   /**
    * Render the component. display an error message instead of the chart if isError is true
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (

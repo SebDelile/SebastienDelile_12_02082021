@@ -4,7 +4,7 @@ import COLORS from '../../utils/COLORS.js';
 import setNiceDomain from '../../utils/setNiceDomain.js';
 import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
 import appendMultilineSvgText from '../../utils/appendMultilineSvgText.js';
-import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
+import componentWithCurry from '../../utils/componentWithCurry.js';
 import propTypes from 'prop-types';
 
 /**
@@ -265,7 +265,7 @@ class LineChart extends Component {
       .select(this.svgRootNode)
       .select('.line')
       .datum(extrapolatedDataset)
-      .attr('d', this.drawLine(this.xAxisScale, this.yAxisScale))
+      .attr('d', this.drawLine())
       .attr('stroke', 'url(#lineGradient)')
       .attr('stroke-width', 2)
       .attr('fill', 'none');
@@ -397,7 +397,7 @@ class LineChart extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (
@@ -435,4 +435,4 @@ LineChart.propTypes = {
   containerHeight: propTypes.number.isRequired,
 };
 
-export default ComponentWithCurry(LineChart);
+export default componentWithCurry(LineChart);

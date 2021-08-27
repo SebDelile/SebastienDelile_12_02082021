@@ -14,11 +14,10 @@ import propTypes from 'prop-types';
  * @extends Component
  * @hideconstructor
  * @param {object} props
- * @param {string} props.key - a key due to the map operation
  * @param {string} props.name - the name of the card content
  * @param {string} props.unit - the unit corresponding to the card content
  * @param {string} props.icon - the icon corresponding to the card content
- * @param {number} props.value - the value corresponding to the card content or a '-' if there is an error
+ * @param {number|string} props.value - the value corresponding to the card content or a '-' if there is an error
  * @param {string} props.color - the color of the icon shape
  */
 class Card extends Component {
@@ -45,7 +44,7 @@ class Card extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (

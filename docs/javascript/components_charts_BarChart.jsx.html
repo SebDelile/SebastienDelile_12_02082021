@@ -32,7 +32,7 @@ import COLORS from '../../utils/COLORS.js';
 import setNiceDomain from '../../utils/setNiceDomain.js';
 import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
 import propTypes from 'prop-types';
-import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
+import componentWithCurry from '../../utils/componentWithCurry.js';
 
 /**
  * Render a barchart. Exported with curry to ensure the props from CharContainer are well checked
@@ -51,7 +51,7 @@ import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
  * @param {number} yAxisSerieIndex - the index of the serie to use to build the y axis
  * @param {number} headerMargin - the margin.top for both title and legend
  * @param {function} xAxisScale - the x scale function to convert data into position/length, updated in this.updateChart()
- * @param {array} yAxisScale - an array containing the y scale functions to convert data into position/length, updated in this.updateChart()
+ * @param {array} yAxisScales - an array containing the y scale functions to convert data into position/length, updated in this.updateChart()
  */
 class BarChart extends Component {
   constructor(props) {
@@ -69,7 +69,7 @@ class BarChart extends Component {
     this.yAxisSerieIndex = this.props.series.findIndex((serie) => serie.isAxis);
     this.headerMargin = this.margin.top / 3;
     this.xAxisScale = null;
-    this.yAxisScale = null;
+    this.yAxisScales = null;
   }
 
   /**
@@ -138,7 +138,7 @@ class BarChart extends Component {
    */
   updateChart = () => {
     this.xAxisScale = this.setxAxisScale();
-    this.yAxisScale = this.setyAxisScale();
+    this.yAxisScales = this.setyAxisScales();
     this.setSvgAttr();
     this.setTitleAttr();
     this.setLegendAttr();
@@ -167,7 +167,7 @@ class BarChart extends Component {
    * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
    * @returns {function} - a function to be used to convert data in chart y position/lenght
    */
-  setyAxisScale = () => {
+  setyAxisScales = () => {
     return this.props.series.map((serie, index) => {
       const { minRounded, maxRounded } = setNiceDomain(
         serie.isFromZero,
@@ -309,7 +309,7 @@ class BarChart extends Component {
       .attr('transform', 'translate(' + this.chartWidth + ', 0)')
       .call(
         d3
-          .axisRight(this.yAxisScale[this.yAxisSerieIndex])
+          .axisRight(this.yAxisScales[this.yAxisSerieIndex])
           .tickSize(-this.chartWidth)
           .tickValues(ticksValues)
       );
@@ -391,7 +391,7 @@ class BarChart extends Component {
           this.drawBar(
             this.xAxisScale(data.x),
             this.chartHeight,
-            this.chartHeight - this.yAxisScale[index](data.y[index]),
+            this.chartHeight - this.yAxisScales[index](data.y[index]),
             index
           )
         );
@@ -494,7 +494,7 @@ class BarChart extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (
@@ -535,7 +535,7 @@ BarChart.propTypes = {
   containerHeight: propTypes.number.isRequired,
 };
 
-export default ComponentWithCurry(BarChart);
+export default componentWithCurry(BarChart);
 </code></pre>
         </article>
     </section>
@@ -546,13 +546,13 @@ export default ComponentWithCurry(BarChart);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:21 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

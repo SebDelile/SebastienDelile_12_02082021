@@ -40,15 +40,17 @@ import propTypes from 'prop-types';
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
- * @param {object} props.data - the raw data to display in the card components
+ * @param {object} props.data - the raw data to display in the card components or an error if data loading has failed
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
  * @param {array} names - the names of the categories of the cards. used to map all categories
  * @param {object} icons - the link to the icons to display for each category
- * @param {object} values - the values to display in the cards (from props)
+ * @param {object} values - the values to display in the cards (from props) or '-' if error
  * @param {object} colors - the colors of the icon shapes for each category
  */
 class KeyData extends Component {
   constructor(props) {
     super(props);
+    this.isError = this.props.data instanceof Error;
     this.names = ['Calories', 'Protéines', 'Glucides', 'Lipides'];
     this.units = {
       Calories: 'kcal',
@@ -62,12 +64,19 @@ class KeyData extends Component {
       Glucides: iconCarbohydrate,
       Lipides: iconLipid,
     };
-    this.values = {
-      Calories: this.props.data.calorieCount,
-      Protéines: this.props.data.proteinCount,
-      Glucides: this.props.data.carbohydrateCount,
-      Lipides: this.props.data.lipidCount,
-    };
+    this.values = this.isError
+      ? {
+          Calories: '-',
+          Protéines: '-',
+          Glucides: '-',
+          Lipides: '-',
+        }
+      : {
+          Calories: this.props.data.calorieCount ?? '-',
+          Protéines: this.props.data.proteinCount ?? '-',
+          Glucides: this.props.data.carbohydrateCount ?? '-',
+          Lipides: this.props.data.lipidCount ?? '-',
+        };
     this.colors = {
       Calories: '#FF0000',
       Protéines: '#4AB8FF',
@@ -78,7 +87,7 @@ class KeyData extends Component {
 
   /**
    * Render the component.
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     return (
@@ -103,12 +112,15 @@ class KeyData extends Component {
  * @memberof KeyData
  */
 KeyData.propTypes = {
-  data: propTypes.shape({
-    calorieCount: propTypes.number,
-    proteinCount: propTypes.number,
-    carbohydrateCount: propTypes.number,
-    lipidCount: propTypes.number,
-  }).isRequired,
+  data: propTypes.oneOfType([
+    propTypes.shape({
+      calorieCount: propTypes.number,
+      proteinCount: propTypes.number,
+      carbohydrateCount: propTypes.number,
+      lipidCount: propTypes.number,
+    }),
+    propTypes.instanceOf(Error),
+  ]).isRequired,
 };
 
 /**
@@ -134,13 +146,13 @@ export default KeyData;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layout.html">general_layout</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageScore.html">AverageScore</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="general_layout.NavLeft.html">NavLeft</a></li><li><a href="general_layout.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Aug 24 2021 18:25:19 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:21 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

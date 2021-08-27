@@ -71,7 +71,7 @@ class Dashboard extends Component {
 
   /**
    * Render the component. when isLoading, render a spinner, when isError redirect to errorPage, otherwise render the dashboard sections
-   * @returns {Reactnode} jsx to be injected in the html
+   * @returns {ReactElement} jsx to be injected in the html
    */
   render() {
     if (this.state.isLoading) return <LoadingSpinner />;
