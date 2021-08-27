@@ -12,15 +12,17 @@ import propTypes from 'prop-types';
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
- * @param {object} props.data - the raw data to display in the card components
+ * @param {object} props.data - the raw data to display in the card components or an error if data loading has failed
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
  * @param {array} names - the names of the categories of the cards. used to map all categories
  * @param {object} icons - the link to the icons to display for each category
- * @param {object} values - the values to display in the cards (from props)
+ * @param {object} values - the values to display in the cards (from props) or '-' if error
  * @param {object} colors - the colors of the icon shapes for each category
  */
 class KeyData extends Component {
   constructor(props) {
     super(props);
+    this.isError = this.props.data instanceof Error;
     this.names = ['Calories', 'Protéines', 'Glucides', 'Lipides'];
     this.units = {
       Calories: 'kcal',
@@ -34,12 +36,19 @@ class KeyData extends Component {
       Glucides: iconCarbohydrate,
       Lipides: iconLipid,
     };
-    this.values = {
-      Calories: this.props.data.calorieCount,
-      Protéines: this.props.data.proteinCount,
-      Glucides: this.props.data.carbohydrateCount,
-      Lipides: this.props.data.lipidCount,
-    };
+    this.values = this.isError
+      ? {
+          Calories: '-',
+          Protéines: '-',
+          Glucides: '-',
+          Lipides: '-',
+        }
+      : {
+          Calories: this.props.data.calorieCount ?? '-',
+          Protéines: this.props.data.proteinCount ?? '-',
+          Glucides: this.props.data.carbohydrateCount ?? '-',
+          Lipides: this.props.data.lipidCount ?? '-',
+        };
     this.colors = {
       Calories: '#FF0000',
       Protéines: '#4AB8FF',
@@ -75,12 +84,15 @@ class KeyData extends Component {
  * @memberof KeyData
  */
 KeyData.propTypes = {
-  data: propTypes.shape({
-    calorieCount: propTypes.number,
-    proteinCount: propTypes.number,
-    carbohydrateCount: propTypes.number,
-    lipidCount: propTypes.number,
-  }).isRequired,
+  data: propTypes.oneOfType([
+    propTypes.shape({
+      calorieCount: propTypes.number,
+      proteinCount: propTypes.number,
+      carbohydrateCount: propTypes.number,
+      lipidCount: propTypes.number,
+    }),
+    propTypes.instanceOf(Error),
+  ]).isRequired,
 };
 
 /**

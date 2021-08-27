@@ -2,8 +2,8 @@ import { Component } from 'react';
 import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import LineChart from '../charts/LineChart.jsx';
+import LoadingError from '../global_layout/LoadingError.jsx';
 import processData from '../../services/processData.js';
-import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
@@ -12,24 +12,29 @@ import propTypes from 'prop-types';
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
- * @param {object} props.data - the raw data to make the linechart
- * @param {array} dataset - the processed data to make the linechart.
+ * @param {object} props.data - the raw data to make the linechart or an error if data loading has failed
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
+ * @param {array} dataset - the processed data to make the linechart or null if data loading has failed
  */
 class AverageSessions extends Component {
   constructor(props) {
     super(props);
-    this.dataset = processData(this.props.data, 'averageSessionsToLineChart');
+    this.isError = this.props.data instanceof Error;
+    this.dataset = this.isError
+      ? null
+      : processData(this.props.data, 'averageSessionsToLineChart');
   }
 
   /**
-   * Render the component. contain a condition to render only when data are available
+   * Render the component. display an error message instead of the chart if isError is true
    * @returns {Reactnode} jsx to be injected in the html
    */
   render() {
-    const isDataReady = isObjectEmpty(this.props.data);
     return (
       <StyledChartContainer>
-        {isDataReady ? null : (
+        {this.isError ? (
+          <LoadingError color={COLORS.veryLightGrey} />
+        ) : (
           <LineChart
             title="Durée moyenne des sessions"
             xAxis={{
@@ -58,10 +63,13 @@ class AverageSessions extends Component {
  * @memberof AverageSessions
  */
 AverageSessions.propTypes = {
-  data: propTypes.shape({
-    userId: propTypes.number,
-    sessions: propTypes.array,
-  }).isRequired,
+  data: propTypes.oneOfType([
+    propTypes.shape({
+      userId: propTypes.number,
+      sessions: propTypes.array,
+    }),
+    propTypes.instanceOf(Error),
+  ]).isRequired,
 };
 
 /**

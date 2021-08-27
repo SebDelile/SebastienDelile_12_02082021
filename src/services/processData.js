@@ -17,7 +17,7 @@ const processData = (data, keyword) => {
         key: item.kind,
         value: item.value,
       })),
-    todayScoreToRadiaBarChart: (data) => (data.value > 1 ? 1 : data.value),
+    todayScoreToRadiaBarChart: (data) => (data > 1 ? 1 : data),
   };
   return processor[keyword](data) ?? data;
 };

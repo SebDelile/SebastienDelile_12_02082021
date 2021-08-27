@@ -31,7 +31,7 @@ const getDataFromMock = (route) => {
   const data = MOCKED_DATA[module]
     ? MOCKED_DATA[module].find((element) => element.userId === +userId)
     : null;
-  return data ? data : new Error('Donnée introuvable');
+  return data ? data : new Error('Data not found');
 };
 
 export default getDataFromMock;

@@ -18,7 +18,7 @@ import propTypes from 'prop-types';
  * @param {string} props.name - the name of the card content
  * @param {string} props.unit - the unit corresponding to the card content
  * @param {string} props.icon - the icon corresponding to the card content
- * @param {number} props.value - the value corresponding to the card content
+ * @param {number} props.value - the value corresponding to the card content or a '-' if there is an error
  * @param {string} props.color - the color of the icon shape
  */
 class Card extends Component {
@@ -26,16 +26,21 @@ class Card extends Component {
    * set an animation on the mount to make the digits to increase from 0 to final value. Number is rendered with a coma thousand separator
    */
   componentDidMount() {
-    const animationStep =
-      5 * 2 ** (Math.floor(Math.log10(this.props.value)) - 1);
-    animateDigits(
-      d3.select(this.spanValue),
-      0,
-      this.props.value,
-      animationStep,
-      LOADING_TRANSITION_SETTINGS,
-      putThousandSeparator
-    );
+    if (this.props.value === '-') this.spanValue.textContent = '-';
+    else {
+      const animationStep =
+        this.props.value === 0
+          ? 1
+          : 5 * 2 ** (Math.floor(Math.log10(this.props.value)) - 1);
+      animateDigits(
+        d3.select(this.spanValue),
+        0,
+        this.props.value,
+        animationStep,
+        LOADING_TRANSITION_SETTINGS,
+        putThousandSeparator
+      );
+    }
   }
 
   /**
@@ -68,7 +73,8 @@ Card.propTypes = {
   name: propTypes.string.isRequired,
   unit: propTypes.string,
   icon: propTypes.string.isRequired,
-  value: propTypes.number.isRequired,
+  value: propTypes.oneOfType([propTypes.number, propTypes.oneOf(['-'])])
+    .isRequired,
   color: propTypes.string.isRequired,
 };
 

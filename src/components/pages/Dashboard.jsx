@@ -8,7 +8,6 @@ import Performance from '../dashboard_sections/Performance';
 import TodayScore from '../dashboard_sections/TodayScore';
 import KeyData from '../dashboard_sections/KeyData';
 import getData from '../../services/getData.js';
-import isObjectEmpty from '../../utils/isObjectEmpty.js';
 import propTypes from 'prop-types';
 
 /**
@@ -18,28 +17,32 @@ import propTypes from 'prop-types';
  * @param {object} state - the state of the component
  * @param {object} props
  * @param {string} props.match.params.id - contains the id of the user passed as parameter to the url
- * @param {object} state.infos - the infos of the user fetched from the API
+ * @param {object} state.greetings - the infos of the user fetched from the API
  * @param {object} state.activity - the activity data of the user fetched from the API
  * @param {object} state.averageSessions - the average sessions data of the user fetched from the API
  * @param {object} state.performance - the performance data of the user fetched from the API
  * @param {object} state.todayScore - the today's score value of the user fetched from the API
  * @param {object} state.keyData - the key data of the user fetched from the API
+ * @param {boolean} state.isLoading - default true, turn false when state is modified
+ * @param {boolean} state.isError - default false, turn true if all 4 fetchs have failed
  */
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      infos: {},
+      greetings: {},
       activity: {},
       averageSessions: {},
       performance: {},
       todayScore: {},
       keyData: {},
+      isLoading: true,
+      isError: false,
     };
   }
 
   /**
-   * Launch the fetches to get the data from API or from the mock (dépending on isFromAPI boolean), then set the obtained object to the state
+   * Launch the fetches to get the data from API or from the mock (depending on route), then set the obtained object to the state. turn isError to true if all 4 fetches have failed
    */
   async componentDidMount() {
     const userId = this.props.match.params.userId;
@@ -47,29 +50,36 @@ class Dashboard extends Component {
     const activity = await getData(`/user/${userId}/activity`);
     const averageSessions = await getData(`/user/${userId}/average-sessions`);
     const performance = await getData(`/user/${userId}/performance`);
-    this.setState({
-      infos: mainData.userInfos,
-      activity: activity,
-      averageSessions: averageSessions,
-      performance: performance,
-      todayScore: { value: mainData.todayScore },
-      keyData: mainData.keyData,
-    });
+    if (
+      mainData instanceof Error &&
+      activity instanceof Error &&
+      averageSessions instanceof Error &&
+      performance instanceof Error
+    )
+      this.setState({ isLoading: false, isError: true });
+    else
+      this.setState({
+        greetings: mainData.userInfos ?? new Error('Data not found'),
+        activity: activity,
+        averageSessions: averageSessions,
+        performance: performance,
+        todayScore: mainData.todayScore ?? new Error('Data not found'),
+        keyData: mainData.keyData ?? new Error('Data not found'),
+        isLoading: false,
+      });
   }
 
   /**
-   * Render the component. contain a condition to render only when data are available and not error
+   * Render the component. when isLoading, render a spinner, when isError redirect to errorPage, otherwise render the dashboard sections
    * @returns {Reactnode} jsx to be injected in the html
    */
   render() {
-    const isDataNotReady = isObjectEmpty(this.state.infos);
-    const isDataError = this.state.infos instanceof Error;
-    if (isDataNotReady) return <LoadingSpinner />;
-    else if (isDataError) return <Redirect to="/errorpage" />;
-    else
+    if (this.state.isLoading) return <LoadingSpinner />;
+    else if (this.state.isError) return <Redirect to="/errorpage" />;
+    else {
       return (
         <Container>
-          <Greetings data={this.state.infos} />
+          <Greetings data={this.state.greetings} />
           <Activity data={this.state.activity} />
           <AverageSessions data={this.state.averageSessions} />
           <Performance data={this.state.performance} />
@@ -77,6 +87,7 @@ class Dashboard extends Component {
           <KeyData data={this.state.keyData} />
         </Container>
       );
+    }
   }
 }
 

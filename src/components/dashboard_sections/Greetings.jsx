@@ -8,13 +8,15 @@ import propTypes from 'prop-types';
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
- * @param {object} props.data - the user main info
- * @param {string} firstName - the fisrtname of the user form the props
+ * @param {object} props.data - the user main info or an error object or an error if data loading has failed
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
+ * @param {string} firstName - the firstname of the user form the props or nothing if data loading has failed
  */
 class Greetings extends Component {
   constructor(props) {
     super(props);
-    this.firstName = this.props.data.firstName;
+    this.isError = this.props.data instanceof Error;
+    this.firstName = this.isError ? '' : this.props.data.firstName;
   }
 
   /**
