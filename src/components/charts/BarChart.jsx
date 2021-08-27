@@ -23,7 +23,7 @@ import ComponentWithCurry from '../../utils/ComponentWithCurry.js';
  * @param {number} yAxisSerieIndex - the index of the serie to use to build the y axis
  * @param {number} headerMargin - the margin.top for both title and legend
  * @param {function} xAxisScale - the x scale function to convert data into position/length, updated in this.updateChart()
- * @param {array} yAxisScale - an array containing the y scale functions to convert data into position/length, updated in this.updateChart()
+ * @param {array} yAxisScales - an array containing the y scale functions to convert data into position/length, updated in this.updateChart()
  */
 class BarChart extends Component {
   constructor(props) {
@@ -41,7 +41,7 @@ class BarChart extends Component {
     this.yAxisSerieIndex = this.props.series.findIndex((serie) => serie.isAxis);
     this.headerMargin = this.margin.top / 3;
     this.xAxisScale = null;
-    this.yAxisScale = null;
+    this.yAxisScales = null;
   }
 
   /**
@@ -110,7 +110,7 @@ class BarChart extends Component {
    */
   updateChart = () => {
     this.xAxisScale = this.setxAxisScale();
-    this.yAxisScale = this.setyAxisScale();
+    this.yAxisScales = this.setyAxisScales();
     this.setSvgAttr();
     this.setTitleAttr();
     this.setLegendAttr();
@@ -139,7 +139,7 @@ class BarChart extends Component {
    * set the y Axis scale (range and domain). use the enlarge domain provided by setNiceDomain(). range is flipped to have a bottom-up axis. However the conversion to used for data is then y = max - f(x)
    * @returns {function} - a function to be used to convert data in chart y position/lenght
    */
-  setyAxisScale = () => {
+  setyAxisScales = () => {
     return this.props.series.map((serie, index) => {
       const { minRounded, maxRounded } = setNiceDomain(
         serie.isFromZero,
@@ -281,7 +281,7 @@ class BarChart extends Component {
       .attr('transform', 'translate(' + this.chartWidth + ', 0)')
       .call(
         d3
-          .axisRight(this.yAxisScale[this.yAxisSerieIndex])
+          .axisRight(this.yAxisScales[this.yAxisSerieIndex])
           .tickSize(-this.chartWidth)
           .tickValues(ticksValues)
       );
@@ -363,7 +363,7 @@ class BarChart extends Component {
           this.drawBar(
             this.xAxisScale(data.x),
             this.chartHeight,
-            this.chartHeight - this.yAxisScale[index](data.y[index]),
+            this.chartHeight - this.yAxisScales[index](data.y[index]),
             index
           )
         );
