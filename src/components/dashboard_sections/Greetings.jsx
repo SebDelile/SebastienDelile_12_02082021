@@ -65,8 +65,13 @@ const Container = styled.header`
  * @memberof Greetings
  */
 const Title = styled.h1`
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 3rem;
+    margin-bottom: 1.25rem;
+  }
 `;
 
 /**
@@ -82,7 +87,11 @@ const FirstName = styled.span`
  * @memberof Greetings
  */
 const Message = styled.p`
-  font-size: 1.125rem;
+  font-size: 0.875rem;
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 1.125rem;
+  }
 `;
 
 export default Greetings;

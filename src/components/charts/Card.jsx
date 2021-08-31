@@ -151,7 +151,7 @@ const Icon = styled.img`
 const Value = styled.p`
   grid-area: value;
   color: ${COLORS.secondary};
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 
   span {
@@ -159,7 +159,7 @@ const Value = styled.p`
   }
 
   @media only screen and (min-width: 80rem) {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 `;
 
@@ -169,7 +169,7 @@ const Value = styled.p`
  */
 const Name = styled.p`
   grid-area: name;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: ${COLORS.tertiary};
 `;
 

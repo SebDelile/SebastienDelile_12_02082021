@@ -80,7 +80,6 @@ Performance.propTypes = {
  */
 const StyledChartContainer = styled(ChartContainer)`
   grid-area: performance;
-  height: 16.5rem;
   background-color: ${COLORS.secondary};
   border-radius: 0.375rem;
 `;

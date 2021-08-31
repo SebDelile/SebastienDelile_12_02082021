@@ -61,7 +61,6 @@ TodayScore.propTypes = {
  */
 const StyledChartContainer = styled(ChartContainer)`
   grid-area: average-score;
-  height: 16.5rem;
   background-color: ${COLORS.veryLightGrey};
   border-radius: 0.375rem;
 `;

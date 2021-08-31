@@ -111,7 +111,7 @@ const Container = styled.main`
   width: calc(100% - var(--nav-left-width));
   flex: 1;
   align-self: flex-end;
-  padding: 2rem var(--main-padding);
+  padding: 1rem var(--main-padding);
   display: grid;
   grid-template-areas:
     'greetings greetings greetings greetings'
@@ -121,9 +121,11 @@ const Container = styled.main`
   justify-items: stretch;
   align-items: stretch;
   gap: 1rem;
+  grid-template-rows: auto 18rem 15rem;
 
   @media only screen and (min-width: 80rem) {
     gap: 2rem;
+    grid-template-rows: auto 20rem 16.5rem;
   }
 `;
 

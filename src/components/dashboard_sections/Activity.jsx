@@ -85,7 +85,6 @@ Activity.propTypes = {
  */
 const StyledChartContainer = styled(ChartContainer)`
   grid-area: activity;
-  height: 20rem;
   background-color: ${COLORS.veryLightGrey};
   color: black;
   border-radius: 0.375rem;

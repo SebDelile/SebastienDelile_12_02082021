@@ -78,7 +78,6 @@ AverageSessions.propTypes = {
  */
 const StyledChartContainer = styled(ChartContainer)`
   grid-area: average-sessions;
-  height: 16.5rem;
   background-color: ${COLORS.primaryAlt};
   border-radius: 0.375rem;
 `;

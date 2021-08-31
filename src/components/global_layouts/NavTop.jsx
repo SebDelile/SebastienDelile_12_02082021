@@ -49,7 +49,7 @@ class NavTop extends Component {
 const Container = styled.header`
   z-index: 10;
   width: 100%;
-  height: 5.75rem;
+  height: 4.5rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -58,6 +58,10 @@ const Container = styled.header`
   padding-right: var(--main-padding);
   background: ${COLORS.veryDarkGrey};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+
+  @media only screen and (min-width: 80rem) {
+    height: 5.75rem;
+  }
 `;
 
 /**
@@ -65,8 +69,13 @@ const Container = styled.header`
  * @memberof NavTop
  */
 const Logo = styled.img`
-  width: 11rem;
-  margin-right: 9rem;
+  height: 3rem;
+  margin-right: 6rem;
+
+  @media only screen and (min-width: 80rem) {
+    height: 3.75rem;
+    margin-right: 9rem;
+  }
 `;
 
 /**
@@ -97,8 +106,12 @@ const NavList = styled.ul`
  * @memberof NavTop
  */
 const NavItem = styled.li`
-  font-size: 1.5rem;
+  font-size: 1rem;
   color: white;
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 1.5rem;
+  }
 `;
 
 /**
