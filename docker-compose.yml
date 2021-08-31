@@ -2,9 +2,7 @@ version: '3'
 
 services:
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+    build: .
     volumes:
       - ./src:/app/src
     ports:

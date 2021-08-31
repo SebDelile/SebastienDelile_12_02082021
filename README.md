@@ -81,11 +81,15 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 This needs you to have Docker installed on your device ([see documentation](https://docs.docker.com/))
 
+### `npm run containers-build`
+
+build the image for both the frontend and the backend API
+
 ### `npm run containers-start`
 
-run an image for the frontend on port 3000 (with hot reload) and an image of the backend api on port 3001.
+run an image for the frontend on port 3000 (with hot reload) and an image of the backend API on port 3001.
 
-It uses docker-compose to build both images and run them (deamon mode)
+It uses docker-compose to run both images in deamon mode. It first builds the unavailable image(s) if needeed.
 
 ### `npm run containers-end`
 
