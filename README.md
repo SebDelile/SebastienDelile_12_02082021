@@ -8,7 +8,17 @@ This prototype includes a landing page containing links to some dashboard pages 
 
 ## How to begin with the project
 
-To install the project on your laptop, fork or clone the repo and launch the command `npm ci` to install all dependencies. Then you can start working on the project !
+You need to first install [node](https://nodejs.org/en/) (v14.15.4 or later) on your device in order to run `npm` commands and [git](https://git-scm.com/) to run the `git` commands
+
+To install the project :
+
+1. clone the repo with `git clone https://github.com/SebDelile/SebastienDelile_12_02082021.git`
+
+1. then go to the new folder with `cd SebastienDelile_12_02082021`
+
+1. finally install all dependencies with `npm ci`
+
+Then you can start working on the project !
 
 ## Documentation
 
