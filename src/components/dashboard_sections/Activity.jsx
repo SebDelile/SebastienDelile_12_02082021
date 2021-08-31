@@ -22,7 +22,7 @@ class Activity extends Component {
     this.isError = this.props.data instanceof Error;
     this.dataset = this.isError
       ? null
-      : processData(this.props.data, 'activityToBarChart');
+      : processData.activityToBarChart(this.props.data);
   }
 
   /**

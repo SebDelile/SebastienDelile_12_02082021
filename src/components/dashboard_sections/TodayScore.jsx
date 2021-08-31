@@ -12,9 +12,9 @@ import propTypes from 'prop-types';
  * @memberof dashboard_sections
  * @extends Component
  * @param {object} props
- * @param {object} props.data - the data to make the radialbarchart, no processing needed, only check if value is >1
+ * @param {number|object} props.data - the data to make the radialbarchart, a single value or an error object
  * @param {boolean} isError - true if this.props.data is an error object, false otherwise
- * @param {array} dataset - the processed data to make the RadialBarchart or null if data loading has failed
+ * @param {value|null} dataset - the processed data to make the RadialBarchart or null if data loading has failed
  */
 class TodayScore extends Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class TodayScore extends Component {
     this.isError = this.props.data instanceof Error;
     this.dataset = this.isError
       ? null
-      : processData(this.props.data, 'todayScoreToRadiaBarChart');
+      : processData.todayScoreToRadiaBarChart(this.props.data);
   }
 
   /**

@@ -22,7 +22,7 @@ class AverageSessions extends Component {
     this.isError = this.props.data instanceof Error;
     this.dataset = this.isError
       ? null
-      : processData(this.props.data, 'averageSessionsToLineChart');
+      : processData.averageSessionsToLineChart(this.props.data);
   }
 
   /**

@@ -22,7 +22,7 @@ class Performance extends Component {
     this.isError = this.props.data instanceof Error;
     this.dataset = this.isError
       ? null
-      : processData(this.props.data, 'performanceToRadarChart');
+      : processData.performanceToRadarChart(this.props.data);
   }
 
   /**
