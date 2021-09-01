@@ -21,7 +21,7 @@ import propTypes from 'prop-types';
  * @param {object} state.activity - the activity data of the user fetched from the API
  * @param {object} state.averageSessions - the average sessions data of the user fetched from the API
  * @param {object} state.performance - the performance data of the user fetched from the API
- * @param {object} state.todayScore - the today's score value of the user fetched from the API
+ * @param {number|object} state.todayScore - the today's score value of the user fetched from the API
  * @param {object} state.keyData - the key data of the user fetched from the API
  * @param {boolean} state.isLoading - default true, turn false when state is modified
  * @param {boolean} state.isError - default false, turn true if all 4 fetchs have failed
@@ -42,31 +42,14 @@ class Dashboard extends Component {
   }
 
   /**
-   * Launch the fetches to get the data from API or from the mock (depending on route), then set the obtained object to the state. turn isError to true if all 4 fetches have failed
+   * Launch the fetches to get the data from API or from the mock (depending on page url), then set the obtained object to the state. turn isError to true if all 4 fetches have failed
    */
   async componentDidMount() {
     const userId = this.props.match.params.userId;
-    const mainData = await getData(`/user/${userId}`);
-    const activity = await getData(`/user/${userId}/activity`);
-    const averageSessions = await getData(`/user/${userId}/average-sessions`);
-    const performance = await getData(`/user/${userId}/performance`);
-    if (
-      mainData instanceof Error &&
-      activity instanceof Error &&
-      averageSessions instanceof Error &&
-      performance instanceof Error
-    )
+    const response = await getData(userId);
+    if (response instanceof Error)
       this.setState({ isLoading: false, isError: true });
-    else
-      this.setState({
-        greetings: mainData.userInfos ?? new Error('Data not found'),
-        activity: activity,
-        averageSessions: averageSessions,
-        performance: performance,
-        todayScore: mainData.todayScore ?? new Error('Data not found'),
-        keyData: mainData.keyData ?? new Error('Data not found'),
-        isLoading: false,
-      });
+    else this.setState({ ...response, isLoading: false });
   }
 
   /**

@@ -1,24 +1,35 @@
-import axios from 'axios';
+import getDataFromAPI from './getDataFromAPI';
 import getDataFromMock from './getDataFromMock';
 
 /**
- * make the call to API or MOCKED_DATA (depending on route) and return the required data as an object
+ * make the call to API and return the required data as an object or an error if it fails. Use an array as input to be sure that Promise.allSettled() will return results in an array with the same order
  * @memberof services
- * @param {string} route - the route to get the required data, if it contains "-data-from-mock" then the call is done to the mocked data
- * @returns {object} the required data, corresponding to the specified user in the route. Or an error if it fails
+ * @param {string} userId - the ID of the user for who the data are needed
+ * @returns {object} the required data, corresponding to the specified user. Or an error if it fails
  */
-const getData = async (route) => {
-  if (route.includes('-data-from-mock')) {
-    return getDataFromMock(route);
-  } else {
-    //do a fetch to the API
-    const BASE_URL = 'http://localhost:3001';
-    try {
-      const rawResponse = await axios.get(BASE_URL + route);
-      return await rawResponse.data.data;
-    } catch (error) {
-      return error;
-    }
+const getData = async (userId) => {
+  const fetchedData = userId.includes('-data-from-mock')
+    ? getDataFromMock(userId.replace('-data-from-mock', ''))
+    : await getDataFromAPI(userId);
+  if (!fetchedData || fetchedData.every((data) => data.value instanceof Error))
+    return new Error('Data not found');
+  else {
+    const [mainData, activity, averageSessions, performance] = fetchedData.map(
+      (data) => data.value
+    );
+    const response = {
+      greetings: mainData.userInfos,
+      activity: activity,
+      averageSessions: averageSessions,
+      performance: performance,
+      todayScore: mainData.todayScore,
+      keyData: mainData.keyData,
+    };
+    Object.keys(response).forEach((key) => {
+      if (response[key] === undefined)
+        response[key] = new Error('Data not found');
+    });
+    return response;
   }
 };
 

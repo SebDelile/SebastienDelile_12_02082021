@@ -1,37 +1,34 @@
 import { MOCKED_DATA } from '../data/MOCKED_DATA.js';
 
 /**
- * the method to get the data from the mock
+ * fetch the data from the Mock and return an array containing the fetched data
  * @memberof services
- * @param {string} route - the route to get the required data, it contains "-data-from-mock" to be removed to convert as real world route
- * @returns {object} the required data, corresponding to the specified user in the route. Or an error if it fails
+ * @param {string} userId - the ID of the user for who the data are needed
+ * @returns {array} - the array containing the fetched data or error objects
  */
-const getDataFromMock = (route) => {
-  const [userId, category] = route
-    .replace('/user/', '')
-    .replace('-data-from-mock', '')
-    .split('/');
-  let module = '';
-  switch (category) {
-    case undefined:
-      module = 'userMainData';
-      break;
-    case 'activity':
-      module = 'userActivity';
-      break;
-    case 'average-sessions':
-      module = 'userAverageSessions';
-      break;
-    case 'performance':
-      module = 'userPerformance';
-      break;
-    default:
-      module = 'error';
-  }
-  const data = MOCKED_DATA[module]
-    ? MOCKED_DATA[module].find((element) => element.userId === +userId)
-    : null;
-  return data ? data : new Error('Data not found');
+const getDataFromMock = (userId) => {
+  /**
+   * search the data of the required user in the corresponding key of MOCKED_DATA
+   * @param {string} key - the key where to find the data
+   * @returns {object} - the data object or an error object
+   */
+  const dataExtractor = (key) => {
+    try {
+      const data =
+        MOCKED_DATA[key].find((element) => element.userId === +userId) ??
+        new Error('Data not found');
+      return { value: data };
+    } catch {
+      return new Error('Data not found');
+    }
+  };
+
+  return [
+    dataExtractor('userMainData'),
+    dataExtractor('userActivity'),
+    dataExtractor('userAverageSessions'),
+    dataExtractor('userPerformance'),
+  ];
 };
 
 export default getDataFromMock;
