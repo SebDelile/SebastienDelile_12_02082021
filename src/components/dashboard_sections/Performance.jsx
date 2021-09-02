@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import ChartContainer from './ChartContainer.jsx';
 import RadarChart from '../charts/RadarChart.jsx';
 import LoadingError from '../others/LoadingError.jsx';
-import processData from '../../services/processData.js';
+import processData from '../../services/ProcessData.js';
 import COLORS from '../../utils/COLORS.js';
 import propTypes from 'prop-types';
 
