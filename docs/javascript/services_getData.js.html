@@ -26,27 +26,38 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import axios from 'axios';
+            <pre class="prettyprint source linenums"><code>import getDataFromAPI from './getDataFromAPI';
 import getDataFromMock from './getDataFromMock';
 
 /**
- * make the call to API or MOCKED_DATA (depending on route) and return the required data as an object
+ * make the call to API and return the required data as an object or an error if it fails. Use an array as input to be sure that Promise.allSettled() will return results in an array with the same order
  * @memberof services
- * @param {string} route - the route to get the required data, if it contains "-data-from-mock" then the call is done to the mocked data
- * @returns {object} the required data, corresponding to the specified user in the route. Or an error if it fails
+ * @param {string} userId - the ID of the user for who the data are needed
+ * @returns {object} the required data, corresponding to the specified user. Or an error if it fails
  */
-const getData = async (route) => {
-  if (route.includes('-data-from-mock')) {
-    return getDataFromMock(route);
-  } else {
-    //do a fetch to the API
-    const BASE_URL = 'http://localhost:3001';
-    try {
-      const rawResponse = await axios.get(BASE_URL + route);
-      return await rawResponse.data.data;
-    } catch (error) {
-      return error;
-    }
+const getData = async (userId) => {
+  const fetchedData = userId.includes('-data-from-mock')
+    ? getDataFromMock(userId.replace('-data-from-mock', ''))
+    : await getDataFromAPI(userId);
+  if (!fetchedData || fetchedData.every((data) => data.value instanceof Error))
+    return new Error('Data not found');
+  else {
+    const [mainData, activity, averageSessions, performance] = fetchedData.map(
+      (data) => data.value
+    );
+    const response = {
+      greetings: mainData.userInfos,
+      activity: activity,
+      averageSessions: averageSessions,
+      performance: performance,
+      todayScore: mainData.todayScore,
+      keyData: mainData.keyData,
+    };
+    Object.keys(response).forEach((key) => {
+      if (response[key] === undefined)
+        response[key] = new Error('Data not found');
+    });
+    return response;
   }
 };
 
@@ -61,13 +72,13 @@ export default getData;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li><li><a href="services.ProcessData.html">ProcessData</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Fri Aug 27 2021 17:32:21 GMT+0200 (heure d’été d’Europe centrale)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Sep 02 2021 15:25:14 GMT+0200 (heure d’été d’Europe centrale)
 </footer>
 
 <script> prettyPrint(); </script>

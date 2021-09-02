@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utils/animateDigits.js</title>
+    <title>JSDoc: Source: services/processData.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utils/animateDigits.js</h1>
+    <h1 class="page-title">Source: services/processData.js</h1>
 
     
 
@@ -26,44 +26,57 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import * as d3 from 'd3';
-
-/**
- * A function to make the digit to animate from a starting value to an ending value
- * @memberof utils
- * @param {d3Element} target - a node selected with the d3.select() method, this node will contain the animated digit (and only it)
- * @param {number} startValue - the value from where to start the animation
- * @param {number} endValue  - the value where the animation ends
- * @param {number} step - the step to round the values for each increment
- * @param {object} transitionSettings - the settings of the transition, must contain a key duration and a key ease
- * @param {function} formatResult - a function to give the displayed value a certain format, if not specified, no format is given (default a=>a)
+            <pre class="prettyprint source linenums"><code>/**
+ * group the data processing method to convert raw data into chart suitable data
+ * note that the class is exported as an instance
+ * @memberof services
+ * @hideconstructor
  */
-const animateDigits = (
-  target,
-  startValue,
-  endValue,
-  step,
-  transitionSettings,
-  formatResult = (a) => a
-) => {
-  target
-    .text(startValue)
-    .transition()
-    .duration(transitionSettings.duration)
-    .ease(transitionSettings.ease)
-    .tween('', () => {
-      let i = d3.interpolateRound(target.text(), endValue);
-      return (t) => {
-        target.text(
-          t === 1
-            ? formatResult(endValue)
-            : formatResult(Math.floor(i(t) / step) * step)
-        );
+class ProcessData {
+  /**
+   * transform raw activity data into suitable barchart data
+   * @param {object} data - the data obtined from API
+   * @returns {array} - the data to inject as dataset prop of the barchart
+   */
+  activityToBarChart = (data) =>
+    data.sessions.map((session) => ({
+      x: new Date(session.day).getDate(),
+      y: [session.kilogram, session.calories],
+    }));
+
+  /**
+   * transform raw average sessions data into suitable linechart data
+   * @param {object} data - the data obtined from API
+   * @returns {array} - the data to inject as dataset prop of the linechart
+   */
+  averageSessionsToLineChart = (data) =>
+    data.sessions.map((session) => {
+      return {
+        x: session.day,
+        y: session.sessionLength,
       };
     });
-};
 
-export default animateDigits;
+  /**
+   * transform raw performance data into suitable radarchart data
+   * @param {object} data - the data obtined from API
+   * @returns {array} - the data to inject as dataset prop of the radarchart
+   */
+  performanceToRadarChart = (data) =>
+    data.data.map((item) => ({
+      key: item.kind,
+      value: item.value,
+    }));
+
+  /**
+   * transform raw todayscore data into suitable radialbarchart data
+   * @param {number} data - the data obtined from API
+   * @returns {number} - the data to inject as dataset prop of the radialbarchart
+   */
+  todayScoreToRadiaBarChart = (data) => (data > 1 ? 1 : data);
+}
+
+export default new ProcessData();
 </code></pre>
         </article>
     </section>

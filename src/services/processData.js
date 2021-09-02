@@ -2,8 +2,9 @@
  * group the data processing method to convert raw data into chart suitable data
  * note that the class is exported as an instance
  * @memberof services
+ * @hideconstructor
  */
-class processData {
+class ProcessData {
   /**
    * transform raw activity data into suitable barchart data
    * @param {object} data - the data obtined from API
@@ -47,4 +48,4 @@ class processData {
   todayScoreToRadiaBarChart = (data) => (data > 1 ? 1 : data);
 }
 
-export default new processData();
+export default new ProcessData();
