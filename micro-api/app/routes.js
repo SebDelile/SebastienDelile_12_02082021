@@ -13,7 +13,7 @@ const {
 const { handleNoUserData } = require('./middleware');
 
 router.get('/', (req, res) => {
-  return res.send('API is ON !');
+  return res.send('SportSee API is ON !');
 });
 
 router.get('/user/:id', (req, res) => {

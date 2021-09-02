@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import APIStatus from '../others/APIStatus';
 
 /**
  * Render a LandingPage
@@ -21,7 +22,10 @@ class LandingPage extends Component {
           Utilisez les liens suivants pour afficher le dashboard d'un
           utilisateur.
         </Message>
-        <Message>En récupérant les données via l'API :</Message>
+        <APIStatusWrapper>
+          <Message>En récupérant les données via l'API :</Message>
+          <APIStatus />
+        </APIStatusWrapper>
         <LinkList>
           <li>
             <StyledLink to="/user/12">Utilisateur #12</StyledLink>
@@ -78,6 +82,18 @@ const Message = styled.p`
   padding: 3rem 0 1rem 0;
 `;
 
+const APIStatusWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2rem;
+
+  & > div {
+    padding: 3rem 0 1rem 0;
+  }
+`;
+
 /**
  * The style for the LinkList part of the LandingPage component
  * @memberof LandingPage
@@ -85,7 +101,7 @@ const Message = styled.p`
 const LinkList = styled.ul`
   list-style: '➥ ' inside;
   display: flex;
-  flex-direction: rows;
+  flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 
