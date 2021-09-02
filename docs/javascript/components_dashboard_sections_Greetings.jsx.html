@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/dashboard_sections/Greetings.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/dashboard_sections/Greetings.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import styled from 'styled-components';
+import COLORS from '../../utils/COLORS.js';
+import propTypes from 'prop-types';
+
+/**
+ * Render the Greetings component
+ * @memberof dashboard_sections
+ * @extends Component
+ * @param {object} props
+ * @param {object} props.data - the user main info or an error object or an error if data loading has failed
+ * @param {boolean} isError - true if this.props.data is an error object, false otherwise
+ * @param {string} firstName - the firstname of the user form the props or nothing if data loading has failed
+ */
+class Greetings extends Component {
+  constructor(props) {
+    super(props);
+    this.isError = this.props.data instanceof Error;
+    this.firstName = this.isError ? '' : this.props.data.firstName;
+  }
+
+  /**
+   * Render the component.
+   * @returns {ReactElement} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;Container>
+        &lt;Title>
+          Bonjour &lt;FirstName>{this.firstName}&lt;/FirstName>
+        &lt;/Title>
+        &lt;Message>
+          Félicitation ! Vous avez explosé vos objectifs hier 👏
+        &lt;/Message>
+      &lt;/Container>
+    );
+  }
+}
+
+/**
+ * The propTypes for the Greetings component
+ * @memberof Greetings
+ */
+Greetings.propTypes = {
+  data: propTypes.shape({
+    userInfos: propTypes.shape({
+      firstName: propTypes.string,
+      lastName: propTypes.string,
+      age: propTypes.number,
+    }),
+  }).isRequired,
+};
+
+/**
+ * The style for the Container part of the Greetings component
+ * @memberof Greetings
+ */
+const Container = styled.header`
+  grid-area: greetings;
+  margin: 1rem 0;
+`;
+
+/**
+ * The style for the Title part of the Greetings component
+ * @memberof Greetings
+ */
+const Title = styled.h1`
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 3rem;
+    margin-bottom: 1.25rem;
+  }
+`;
+
+/**
+ * The style for the FirstName part of the Greetings component
+ * @memberof Greetings
+ */
+const FirstName = styled.span`
+  color: ${COLORS.primary};
+`;
+
+/**
+ * The style for the Messages part of the Greetings component
+ * @memberof Greetings
+ */
+const Message = styled.p`
+  font-size: 0.875rem;
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 1.125rem;
+  }
+`;
+
+export default Greetings;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li><li><a href="services.ProcessData.html">ProcessData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Sep 02 2021 15:25:14 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

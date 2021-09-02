@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/charts/Card.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/charts/Card.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Component } from 'react';
+import styled from 'styled-components';
+import * as d3 from 'd3';
+import giveOpacityToColorHex from '../../utils/giveOpacityToColorHex.js';
+import putThousandSeparator from '../../utils/putThousandSeparator.js';
+import COLORS from '../../utils/COLORS.js';
+import LOADING_TRANSITION_SETTINGS from '../../utils/LOADING_TRANSITION_SETTINGS.js';
+import animateDigits from '../../utils/animateDigits.js';
+import propTypes from 'prop-types';
+
+/**
+ * Render the card component
+ * @memberof charts
+ * @extends Component
+ * @hideconstructor
+ * @param {object} props
+ * @param {string} props.name - the name of the card content
+ * @param {string} props.unit - the unit corresponding to the card content
+ * @param {string} props.icon - the icon corresponding to the card content
+ * @param {number|string} props.value - the value corresponding to the card content or a '-' if there is an error
+ * @param {string} props.color - the color of the icon shape
+ */
+class Card extends Component {
+  /**
+   * set an animation on the mount to make the digits to increase from 0 to final value. Number is rendered with a coma thousand separator
+   */
+  componentDidMount() {
+    if (this.props.value === '-') this.spanValue.textContent = '-';
+    else {
+      const animationStep =
+        this.props.value === 0
+          ? 1
+          : 5 * 2 ** (Math.floor(Math.log10(this.props.value)) - 1);
+      animateDigits(
+        d3.select(this.spanValue),
+        0,
+        this.props.value,
+        animationStep,
+        LOADING_TRANSITION_SETTINGS,
+        putThousandSeparator
+      );
+    }
+  }
+
+  /**
+   * Render the component.
+   * @returns {ReactElement} jsx to be injected in the html
+   */
+  render() {
+    return (
+      &lt;Container>
+        &lt;ContentGrid>
+          &lt;IconShape bgcolor={giveOpacityToColorHex(this.props.color, 0.1)}>
+            &lt;Icon src={this.props.icon} />
+          &lt;/IconShape>
+          &lt;Value>
+            &lt;span ref={(el) => (this.spanValue = el)}>&lt;/span>
+            {this.props.unit}
+          &lt;/Value>
+          &lt;Name>{this.props.name}&lt;/Name>
+        &lt;/ContentGrid>
+      &lt;/Container>
+    );
+  }
+}
+
+/**
+ * The propTypes for the Card component
+ * @memberof Card
+ */
+Card.propTypes = {
+  name: propTypes.string.isRequired,
+  unit: propTypes.string,
+  icon: propTypes.string.isRequired,
+  value: propTypes.oneOfType([propTypes.number, propTypes.oneOf(['-'])])
+    .isRequired,
+  color: propTypes.string.isRequired,
+};
+
+/**
+ * The style for the Container part of the Card component
+ * @memberof Card
+ */
+const Container = styled.div`
+  background-color: ${COLORS.veryLightGrey};
+  border-radius: 0.375rem;
+  display: flex;
+  justify-content: space-arround;
+  align-items: center;
+`;
+
+/**
+ * The style for the ContentGrid part of the Card component
+ * @memberof Card
+ */
+const ContentGrid = styled.div`
+  display: grid;
+  grid-template-areas:
+    'icon value'
+    'icon name';
+  grid-template-columns: repeat(2, auto);
+  justify-items: start;
+  align-items: center;
+  row-gap: 0;
+  justify-content: start;
+  padding: 2rem 1rem 2rem 1rem;
+  column-gap: 1rem;
+
+  @media only screen and (min-width: 80rem) {
+    padding: 2rem;
+    column-gap: 1.5rem;
+  }
+`;
+
+/**
+ * The style for the IconShape part of the Card component
+ * @memberof Card
+ */
+const IconShape = styled.div`
+  grid-area: icon;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.375rem;
+  background-color: ${(props) => props.bgcolor};
+  height: 3rem;
+  width: 3rem;
+
+  @media only screen and (min-width: 80rem) {
+    height: 3.75rem;
+    width: 3.75rem;
+  }
+`;
+
+/**
+ * The style for the Icon part of the Card component
+ * @memberof Card
+ */
+const Icon = styled.img`
+  height: 1rem;
+
+  @media only screen and (min-width: 80rem) {
+    height: 1.25rem;
+  }
+`;
+
+/**
+ * The style for the Value part of the Card component
+ * @memberof Card
+ */
+const Value = styled.p`
+  grid-area: value;
+  color: ${COLORS.secondary};
+  font-size: 1rem;
+  font-weight: 700;
+
+  span {
+    font-weight: 700;
+  }
+
+  @media only screen and (min-width: 80rem) {
+    font-size: 1.25rem;
+  }
+`;
+
+/**
+ * The style for the Name part of the Card component
+ * @memberof Card
+ */
+const Name = styled.p`
+  grid-area: name;
+  font-size: 0.875rem;
+  color: ${COLORS.tertiary};
+`;
+
+export default Card;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="-_index.html">_index</a></li><li><a href="app.html">app</a></li><li><a href="charts.html">charts</a></li><li><a href="dashboard_sections.html">dashboard_sections</a></li><li><a href="general_layouts.html">general_layouts</a></li><li><a href="pages.html">pages</a></li><li><a href="services.html">services</a></li><li><a href="utils.html">utils</a></li></ul><h3>Classes</h3><ul><li><a href="app.App.html">App</a></li><li><a href="charts.BarChart.html">BarChart</a></li><li><a href="charts.Card.html">Card</a></li><li><a href="charts.LineChart.html">LineChart</a></li><li><a href="charts.RadarChart.html">RadarChart</a></li><li><a href="charts.RadialBarChart.html">RadialBarChart</a></li><li><a href="dashboard_sections.Activity.html">Activity</a></li><li><a href="dashboard_sections.AverageSessions.html">AverageSessions</a></li><li><a href="dashboard_sections.ChartContainer.html">ChartContainer</a></li><li><a href="dashboard_sections.Greetings.html">Greetings</a></li><li><a href="dashboard_sections.KeyData.html">KeyData</a></li><li><a href="dashboard_sections.Performance.html">Performance</a></li><li><a href="dashboard_sections.TodayScore.html">TodayScore</a></li><li><a href="general_layouts.LoadingError.html">LoadingError</a></li><li><a href="general_layouts.NavLeft.html">NavLeft</a></li><li><a href="general_layouts.NavTop.html">NavTop</a></li><li><a href="pages.Dashboard.html">Dashboard</a></li><li><a href="pages.ErrorPage.html">ErrorPage</a></li><li><a href="pages.LandingPage.html">LandingPage</a></li><li><a href="services.ProcessData.html">ProcessData</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Sep 02 2021 15:25:14 GMT+0200 (heure d’été d’Europe centrale)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
