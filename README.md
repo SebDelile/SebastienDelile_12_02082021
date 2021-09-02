@@ -4,6 +4,8 @@ SportSee is a web application offering its user to monitor sports and diets metr
 
 This prototype includes a landing page containing links to some dashboard pages generated from API data or mocked data.
 
+The project is hosted on netlify there (without the API) : [https://sebdelile-ocr-p12-sportsee.netlify.app/](https://sebdelile-ocr-p12-sportsee.netlify.app/) 
+
 ![app preview - dashboard](/docs/app-preview-dashboard.png)
 
 ## How to begin with the project
