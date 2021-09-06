@@ -276,7 +276,7 @@ class RadarChart extends Component {
     svg
       .select('.tooltip-text')
       .attr('height', 24)
-      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
       .attr('transform', 'translate(8, 12)')
       .attr('fill', 'black')
       .attr('font-size', 10)

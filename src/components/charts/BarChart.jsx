@@ -177,7 +177,7 @@ class BarChart extends Component {
           ')'
       )
       .attr('font-size', 15)
-      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
       .attr('fill', COLORS.secondaryAlt)
       .text(this.props.title);
   };
@@ -202,7 +202,7 @@ class BarChart extends Component {
       .attr('fill', COLORS.tertiary)
       .text((serie) => `${serie.name} (${serie.unit})`)
       .attr('dx', 15)
-      .attr('alignment-baseline', 'middle');
+      .attr('dominant-baseline', 'middle');
 
     legendItems.attr('transform', (el, i) => {
       const interPadding = 32;
@@ -390,7 +390,7 @@ class BarChart extends Component {
     svg
       .selectAll('.tooltip-text')
       .attr('height', 32)
-      .attr('alignment-baseline', 'middle')
+      .attr('dominant-baseline', 'middle')
       .attr(
         'transform',
         (serie, index) => `translate(8, ${(index + 0.5) * 32})`
