@@ -45,11 +45,12 @@ class NavLeft extends Component {
  * @memberof NavLeft
  */
 const Container = styled.aside`
-  position: fixed;
+  position: absolute;
   z-index: 0;
   left: 0;
   top: 0;
   height: 100%;
+  min-height: 48rem;
   width: var(--nav-left-width);
   display: flex;
   justify-content: center;

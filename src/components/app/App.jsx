@@ -43,6 +43,7 @@ class App extends Component {
  * @memberof App
  */
 const AppContainer = styled.div`
+  position: relative;
   width: 100%;
   min-height: 100%;
   display: flex;
