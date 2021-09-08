@@ -10,6 +10,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
   api:
-    build: ./micro-api/
+    build: ./microApi/
     ports:
       - '3001:3001'

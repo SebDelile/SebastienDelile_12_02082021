@@ -4,7 +4,7 @@ SportSee is a web application offering its user to monitor sports and diets metr
 
 This prototype includes a landing page containing links to some dashboard pages generated from API data or mocked data.
 
-The project is hosted on netlify there (without the API) : [https://sebdelile-ocr-p12-sportsee.netlify.app/](https://sebdelile-ocr-p12-sportsee.netlify.app/) 
+The project is hosted on netlify there (without the API) : [https://sebdelile-ocr-p12-sportsee.netlify.app/](https://sebdelile-ocr-p12-sportsee.netlify.app/)
 
 ![app preview - dashboard](/docs/app-preview-dashboard.png)
 
@@ -20,7 +20,15 @@ To install the project :
 
 1. finally install all dependencies with `npm ci`
 
-Then you can start working on the project !
+Then you can start working on front side of the project !
+
+If you want to make changes to the API, you can either use a Docker image (see Docker-compose scripts section at the end of this readme) or run it directly. For the later method, please follow these steps :
+
+1. move to the micro-api folder with `cd micro-api`
+
+1. install the dependencies with `npm ci`
+
+1. then move back to the root folder with `cd ..`
 
 ## Documentation
 
@@ -63,7 +71,7 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-Please not there is no yet any implemented test.
+Please note that there is no yet any implemented test.
 
 ### `npm run build`
 
